@@ -3,7 +3,7 @@
 [![crates.io lotus-script](https://img.shields.io/badge/crates.io-lotus--script-orange)](https://crates.io/crates/lotus-script)
 ![license MIT](https://img.shields.io/badge/LICENSE-MIT-green)
 ![license APACHE2.0](https://img.shields.io/badge/LICENSE-APACHE2.0-green)
-![actively maintaned](https://img.shields.io/badge/maintenance-passive-yellow)
+![maintenance active](https://img.shields.io/badge/maintenance-active-yellow)
 
 Public crates for [LOTUS](https://store.steampowered.com/app/370350/LOTUSSimulator/) Scripting.
 
