@@ -1,0 +1,24 @@
+[package]
+name = "lotus-sc"
+version = "0.1.4"
+edition = "2021"
+description = "LOTUS Script CLI"
+license = "MIT/Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+default = []
+wasm = []
+
+[dependencies]
+anyhow.workspace = true
+cargo_toml.workspace = true
+clap = { workspace = true, features = ["derive"] }
+dirs.workspace = true
+lotus-script.workspace = true
+rmp-serde.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+wasmtime.workspace = true

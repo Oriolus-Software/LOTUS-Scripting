@@ -1,0 +1,17 @@
+[package]
+name = "lotus-shared"
+version = "0.2.2"
+edition = "2021"
+description = "Shared code for LOTUS scripts and engine."
+license = "MIT/Apache-2.0"
+
+[features]
+default = []
+bevy = ["dep:bevy"]
+
+[dependencies]
+bevy = { version = "0.14", default-features = false, optional = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+serde_repr = "0.1.19"
+thiserror.workspace = true
