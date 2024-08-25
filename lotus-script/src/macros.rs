@@ -1,14 +1,12 @@
 #[macro_export]
 macro_rules! script {
     ($t:ident) => {
-        static SCRIPT: ::std::sync::OnceLock<::std::sync::RwLock<$t>> =
-            ::std::sync::OnceLock::new();
+        static SCRIPT: ::std::sync::LazyLock<::std::sync::Mutex<$t>> =
+            ::std::sync::LazyLock::new(Default::default);
 
         #[no_mangle]
         pub fn init() {
-            SCRIPT.get_or_init(Default::default);
-
-            SCRIPT.get().unwrap().write().unwrap().init();
+            SCRIPT.lock().unwrap().init();
         }
 
         #[no_mangle]
@@ -19,24 +17,13 @@ macro_rules! script {
 
         #[no_mangle]
         pub fn tick() {
-            SCRIPT
-                .get()
-                .expect("expected script to be initialized")
-                .write()
-                .expect("expected script write lock")
-                .tick();
+            SCRIPT.lock().unwrap().tick();
         }
 
         #[no_mangle]
         pub fn late_tick() {
-            let mut script = SCRIPT
-                .get()
-                .expect("expected script to be initialized")
-                .write()
-                .expect("expected script write lock");
-
             for message in $crate::message::get() {
-                script.on_message(message);
+                SCRIPT.lock().unwrap().on_message(message);
             }
         }
     };

@@ -1,27 +1,34 @@
 [workspace]
-members = ["lotus-bindgen-macros", "lotus-sc", "lotus-shared"]
+members = [
+  "lotus-bindgen-macros",
+  "lotus-sc",
+  "lotus-script-sys",
+  "lotus-shared",
+]
 resolver = "2"
 
 [workspace.dependencies]
 anyhow = "1"
+bevy = { version = "0.14", default-features = false }
 cargo_toml = "0.20"
 clap = "4"
 dirs = "5"
-glam = "0.27"
+image = { version = "0.25.2", default-features = false }
 lotus-bindgen-macros = { version = "0.1", path = "./lotus-bindgen-macros" }
-lotus-script = { version = "0.4", path = "./lotus-script" }
-lotus-shared = { version = "0.2", path = "./lotus-shared" }
-proc-macro2 = "1.0.78"
-quote = "1.0.35"
+lotus-script = { version = "0.5", path = "./lotus-script" }
+lotus-script-sys = { version = "0.1", path = "./lotus-script-sys" }
+lotus-shared = { version = "0.3", path = "./lotus-shared" }
+proc-macro2 = "1"
+quote = "1"
 rmp-serde = "1"
 serde = "1"
 serde_json = "1"
-serde_repr = "0.1.19"
-syn = "2.0.48"
+serde_repr = "0.1"
+syn = "2"
 thiserror = "1"
 tracing = "0.1"
 tracing-subscriber = "0.3"
-wasmtime = "23"
+wasmtime = "24"
 
 [profile.dev]
 opt-level = 1

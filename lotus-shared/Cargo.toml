@@ -1,17 +1,22 @@
 [package]
 name = "lotus-shared"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2021"
 description = "Shared code for LOTUS scripts and engine."
 license = "MIT/Apache-2.0"
 
 [features]
 default = []
+ffi = ["dep:lotus-script-sys"]
+engine = ["bevy", "image"]
 bevy = ["dep:bevy"]
+image = ["dep:image"]
 
 [dependencies]
-bevy = { version = "0.14", default-features = false, optional = true }
+bevy = { workspace = true, optional = true, features = ["bevy_color"] }
+image = { workspace = true, optional = true }
+lotus-script-sys = { workspace = true, optional = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
-serde_repr = "0.1.19"
+serde_repr.workspace = true
 thiserror.workspace = true

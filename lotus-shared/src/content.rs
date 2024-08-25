@@ -17,3 +17,15 @@ impl std::hash::Hash for ContentId {
         self.version.to_bits().hash(state);
     }
 }
+
+#[cfg(feature = "ffi")]
+mod ffi {
+    use lotus_script_sys::{FfiObject, FromFfi};
+
+    impl FromFfi for crate::content::ContentId {
+        type FfiType = u64;
+        fn from_ffi(ffi: Self::FfiType) -> Self {
+            FfiObject::from_packed(ffi).deserialize()
+        }
+    }
+}

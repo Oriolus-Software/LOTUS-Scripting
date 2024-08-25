@@ -1,5 +1,4 @@
 //! Logging utilities.
-use crate::{ffi, FfiObject};
 
 /// Log level
 pub enum Level {
@@ -20,7 +19,7 @@ pub fn write(level: Level, message: impl AsRef<str>) {
 
     let message = FfiObject::new(&message.as_ref());
     unsafe {
-        ffi::log::write(level, message.packed());
+        lotus_script_sys::log::write(level, message.packed());
     }
 }
 
@@ -77,5 +76,6 @@ pub use error;
 pub use info;
 #[doc(inline)]
 pub use log;
+use lotus_script_sys::FfiObject;
 #[doc(inline)]
 pub use warning;

@@ -1,13 +1,12 @@
+use lotus_script_sys::FfiObject;
 pub use lotus_shared::message::*;
 
 mod types;
 pub use types::*;
 
-use crate::FfiObject;
-
 #[doc(hidden)]
 pub fn get() -> Vec<Message> {
-    let messages = FfiObject::from_packed(unsafe { crate::ffi::messages::get() });
+    let messages = FfiObject::from_packed(unsafe { lotus_script_sys::messages::take() });
 
     messages.deserialize()
 }

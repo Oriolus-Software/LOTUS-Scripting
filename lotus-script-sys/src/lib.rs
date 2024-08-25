@@ -1,6 +1,5 @@
 use lotus_bindgen_macros::lotus_bindgen;
-
-use crate::FfiObject;
+use serde::{de::DeserializeOwned, Serialize};
 
 #[no_mangle]
 pub extern "C" fn allocate(size: u32) -> u32 {
@@ -24,6 +23,13 @@ extern "C" {
     pub fn is_rc() -> bool;
 }
 
+pub mod assets {
+    #[link(wasm_import_module = "assets")]
+    extern "C" {
+        pub fn preload(id: u64);
+    }
+}
+
 pub mod time {
     #[link(wasm_import_module = "time")]
     extern "C" {
@@ -41,7 +47,19 @@ pub mod log {
 pub mod messages {
     #[link(wasm_import_module = "messages")]
     extern "C" {
-        pub fn get() -> u64;
+        pub fn take() -> u64;
+        pub fn send(target: u64, message: u64);
+    }
+}
+
+pub mod textures {
+    #[link(wasm_import_module = "textures")]
+    extern "C" {
+        pub fn create(options: u64) -> u64;
+        pub fn add_action(texture: u64, options: u64);
+        pub fn get_pixel(texture: u64, x: u32, y: u32) -> u32;
+        pub fn apply_to(texture: u64, name: u64);
+        pub fn flush_actions(texture: u64);
     }
 }
 
@@ -99,9 +117,46 @@ impl FromFfi for String {
     }
 }
 
-impl FromFfi for crate::content::ContentId {
-    type FfiType = u64;
-    fn from_ffi(ffi: Self::FfiType) -> Self {
-        FfiObject::from_packed(ffi).deserialize()
+pub struct FfiObject {
+    data: Box<[u8]>,
+}
+
+impl FfiObject {
+    pub fn new<T: Serialize>(value: &T) -> Self {
+        let data = rmp_serde::to_vec_named(value)
+            .expect("Failed to serialize value")
+            .into_boxed_slice();
+
+        Self { data }
+    }
+
+    pub fn deserialize<T: DeserializeOwned>(&self) -> T {
+        rmp_serde::from_slice(&self.data).expect("Failed to deserialize value")
+    }
+
+    pub fn packed(&self) -> u64 {
+        let ptr = self.data.as_ptr() as u32;
+        let len = self.data.len() as u32;
+
+        let mut packed = [0u8; 8];
+        packed[..4].copy_from_slice(&ptr.to_be_bytes());
+        packed[4..].copy_from_slice(&len.to_be_bytes());
+
+        u64::from_be_bytes(packed)
+    }
+
+    pub fn packed_forget(self) -> u64 {
+        let packed = self.packed();
+        std::mem::forget(self);
+        packed
+    }
+
+    pub fn from_packed(packed: u64) -> Self {
+        let packed = packed.to_be_bytes();
+        let ptr = u32::from_be_bytes(packed[..4].try_into().unwrap());
+        let len = u32::from_be_bytes(packed[4..].try_into().unwrap());
+
+        let data = unsafe { std::slice::from_raw_parts(ptr as *const u8, len as usize) };
+        Self { data: data.into() }
     }
 }

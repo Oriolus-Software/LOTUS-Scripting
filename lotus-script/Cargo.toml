@@ -1,6 +1,6 @@
 [package]
 name = "lotus-script"
-version = "0.4.2"
+version = "0.5.0"
 edition = "2021"
 description = "A library for creating LOTUS-Simulator scripts."
 license = "MIT/Apache-2.0"
@@ -8,9 +8,9 @@ license = "MIT/Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-glam = { workspace = true, features = ["serde"] }
 lotus-bindgen-macros = { workspace = true }
-lotus-shared.workspace = true
+lotus-script-sys.workspace = true
+lotus-shared = { workspace = true, features = ["ffi"] }
 rmp-serde.workspace = true
 serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true

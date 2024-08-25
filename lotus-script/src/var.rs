@@ -1,9 +1,5 @@
+use lotus_script_sys::{FfiObject, FromFfi};
 use lotus_shared::content::ContentId;
-
-use crate::{
-    ffi::{self, FromFfi},
-    FfiObject,
-};
 
 pub trait VariableType {
     fn get(name: &str) -> Self;
@@ -20,12 +16,12 @@ macro_rules! impl_variable_type {
         impl VariableType for $type {
             fn get(name: &str) -> Self {
                 let name = FfiObject::new(&name);
-                unsafe { ffi::var::$get(name.packed()) as _ }
+                unsafe { lotus_script_sys::var::$get(name.packed()) as _ }
             }
 
             fn set(&self, name: &str) {
                 let name = FfiObject::new(&name);
-                unsafe { ffi::var::$set(name.packed(), *self as _) }
+                unsafe { lotus_script_sys::var::$set(name.packed(), *self as _) }
             }
         }
     };
@@ -47,40 +43,40 @@ impl_variable_type!(f64, get_f64, set_f64);
 impl VariableType for bool {
     fn get(name: &str) -> Self {
         let name = FfiObject::new(&name);
-        unsafe { ffi::var::get_bool(name.packed()) }
+        unsafe { lotus_script_sys::var::get_bool(name.packed()) }
     }
 
     fn set(&self, name: &str) {
         let name = FfiObject::new(&name);
-        unsafe { ffi::var::set_bool(name.packed(), *self) }
+        unsafe { lotus_script_sys::var::set_bool(name.packed(), *self) }
     }
 }
 
 impl VariableType for String {
     fn get(name: &str) -> Self {
         let name = FfiObject::new(&name);
-        let ptr = unsafe { ffi::var::get_string(name.packed()) };
+        let ptr = unsafe { lotus_script_sys::var::get_string(name.packed()) };
         String::from_ffi(ptr)
     }
 
     fn set(&self, name: &str) {
         let name = FfiObject::new(&name);
         let value = FfiObject::new(self);
-        unsafe { ffi::var::set_string(name.packed(), value.packed()) }
+        unsafe { lotus_script_sys::var::set_string(name.packed(), value.packed()) }
     }
 }
 
 impl VariableType for ContentId {
     fn get(name: &str) -> Self {
         let name = FfiObject::new(&name);
-        let ptr = unsafe { ffi::var::get_content_id(name.packed()) };
+        let ptr = unsafe { lotus_script_sys::var::get_content_id(name.packed()) };
         ContentId::from_ffi(ptr)
     }
 
     fn set(&self, name: &str) {
         let name = FfiObject::new(&name);
         let value = FfiObject::new(self);
-        unsafe { ffi::var::set_content_id(name.packed(), value.packed()) }
+        unsafe { lotus_script_sys::var::set_content_id(name.packed(), value.packed()) }
     }
 }
 

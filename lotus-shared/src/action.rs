@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::{input::KeyCode, message::MessageType};
+use crate::{
+    input::{ActionState, KeyCode},
+    message::MessageType,
+};
 
 /// Describes an action that can be registered with the engine.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -11,10 +14,10 @@ pub struct RegisterAction {
 }
 
 /// Describes an event that is sent when an action is triggered.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ActionEvent {
-    name: String,
-    kind: ActionKind,
+    pub name: String,
+    pub state: ActionState,
 }
 
 impl MessageType for ActionEvent {

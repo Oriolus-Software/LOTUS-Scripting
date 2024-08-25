@@ -1,0 +1,12 @@
+[package]
+name = "lotus-script-sys"
+version = "0.1.2"
+edition = "2021"
+description = "FFI bindings for LOTUS-Simulator scripts."
+license = "MIT/Apache-2.0"
+
+[dependencies]
+lotus-bindgen-macros = { workspace = true }
+rmp-serde.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_repr.workspace = true

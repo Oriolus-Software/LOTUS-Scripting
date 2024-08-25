@@ -106,13 +106,24 @@ impl Message {
     }
 
     /// Sends the message to the given target.
-    pub fn send(&self, _target: MessageTarget) {
-        todo!()
+    #[cfg(feature = "ffi")]
+    pub fn send(&self, target: MessageTarget) {
+        let this = lotus_script_sys::FfiObject::new(self);
+        let target = lotus_script_sys::FfiObject::new(&target);
+
+        unsafe { lotus_script_sys::messages::send(target.packed(), this.packed()) }
     }
 }
 
 /// Represents a message target.
-pub enum MessageTarget {}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum MessageTarget {
+    Myself,
+    ChildByIndex(usize),
+    Broadcast,
+    BroadcastExceptSelf,
+    Parent,
+}
 
 #[cfg(test)]
 mod tests {
@@ -137,6 +148,7 @@ mod tests {
         assert_eq!(message.id(), "test_message");
 
         let value = message.value::<TestMessage>().unwrap();
+
         assert_eq!(value, TestMessage { value: 42 });
 
         message
