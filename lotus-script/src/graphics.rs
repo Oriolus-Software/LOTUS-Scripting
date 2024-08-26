@@ -23,7 +23,11 @@ pub mod textures {
         }
 
         pub fn draw_rect(&mut self, start: impl Into<UVec2>, end: impl Into<UVec2>, color: Color) {
-            self.add_action(TextureAction::DrawRect(start.into(), end.into(), color));
+            self.add_action(TextureAction::DrawRect {
+                start: start.into(),
+                end: end.into(),
+                color,
+            });
         }
 
         pub fn clear(&mut self, color: Color) {

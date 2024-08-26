@@ -34,6 +34,7 @@ pub mod time {
     #[link(wasm_import_module = "time")]
     extern "C" {
         pub fn delta_f64() -> f64;
+        pub fn ticks_alive() -> u64;
     }
 }
 

@@ -104,7 +104,7 @@ pub mod textures {
 
     use serde::{Deserialize, Serialize};
 
-    use crate::math::UVec2;
+    use crate::{content::ContentId, math::UVec2};
 
     use super::Color;
 
@@ -119,7 +119,18 @@ pub mod textures {
     pub enum TextureAction {
         Clear(Color),
         DrawPixels(Box<[DrawPixel]>),
-        DrawRect(UVec2, UVec2, Color),
+        DrawRect {
+            start: UVec2,
+            end: UVec2,
+            color: Color,
+        },
+        DrawText {
+            font: ContentId,
+            text: String,
+            top_left: UVec2,
+            letter_spacing: u32,
+            full_color: Option<Color>,
+        },
     }
 
     #[derive(Clone, Serialize, Deserialize)]
