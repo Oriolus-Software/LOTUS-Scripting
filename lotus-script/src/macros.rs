@@ -1,12 +1,14 @@
 #[macro_export]
 macro_rules! script {
     ($t:ident) => {
-        static SCRIPT: ::std::sync::LazyLock<::std::sync::Mutex<$t>> =
-            ::std::sync::LazyLock::new(Default::default);
+        thread_local! {
+            static SCRIPT: ::std::sync::LazyLock<::std::sync::Mutex<$t>> =
+                ::std::sync::LazyLock::new(Default::default);
+        }
 
         #[no_mangle]
         pub fn init() {
-            SCRIPT.lock().unwrap().init();
+            SCRIPT.with(|s| s.lock().unwrap().init());
         }
 
         #[no_mangle]
@@ -17,13 +19,13 @@ macro_rules! script {
 
         #[no_mangle]
         pub fn tick() {
-            SCRIPT.lock().unwrap().tick();
+            SCRIPT.with(|s| s.lock().unwrap().tick());
         }
 
         #[no_mangle]
         pub fn late_tick() {
             for message in $crate::message::get() {
-                SCRIPT.lock().unwrap().on_message(message);
+                SCRIPT.with(|s| s.lock().unwrap().on_message(message));
             }
         }
     };
