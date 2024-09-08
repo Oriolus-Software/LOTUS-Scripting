@@ -48,7 +48,7 @@ impl FromStr for Profile {
         match s.to_lowercase().as_str() {
             "release" => Ok(Profile::Release),
             "dev" => Ok(Profile::Dev),
-            _ => return Err("invalid profile, must be 'release' or 'dev'"),
+            _ => Err("invalid profile, must be 'release' or 'dev'"),
         }
     }
 }
