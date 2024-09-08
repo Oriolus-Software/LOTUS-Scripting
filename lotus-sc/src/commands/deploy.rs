@@ -75,7 +75,7 @@ impl DeployCommand {
                     .package
                     .as_ref()
                     .context("in a workspace, package name is required")?;
-                if !workspace.members.contains(&package) {
+                if !workspace.members.contains(package) {
                     anyhow::bail!("Package {} is not a member of the workspace", package);
                 }
 
