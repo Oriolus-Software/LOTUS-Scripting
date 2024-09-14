@@ -97,9 +97,7 @@ impl Message {
         f: impl FnOnce(T) -> Result<(), Box<dyn std::error::Error>>,
     ) -> Result<bool, MessageHandleError> {
         match self.value::<T>() {
-            Ok(v) => f(v)
-                .map_err(|e| MessageHandleError::Handler(e))
-                .map(|_| true),
+            Ok(v) => f(v).map_err(MessageHandleError::Handler).map(|_| true),
             Err(MessageValueError::InvalidType) => Ok(false),
             Err(MessageValueError::Serialization(e)) => Err(MessageHandleError::Serialization(e)),
         }
