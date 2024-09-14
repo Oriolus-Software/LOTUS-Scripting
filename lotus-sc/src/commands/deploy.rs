@@ -3,20 +3,40 @@ use std::{process::Command, str::FromStr};
 use anyhow::Context;
 use cargo_toml::Manifest;
 use clap::Parser;
+use serde::{Deserialize, Serialize};
 
 /// Deploy a script written for LOTUS.
 #[derive(Parser)]
 pub struct DeployCommand {
-    #[clap(flatten)]
-    id: PartialContentId,
-
-    /// Package name, if in a workspace.
-    #[clap(short, long)]
-    package: Option<String>,
-
     /// The profile to build with.
     #[clap(long, default_value = "dev")]
     profile: Profile,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct ScriptConfig {
+    deploy: ScriptDeployConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+struct ScriptDeployConfig {
+    package: Option<String>,
+    user_id: i32,
+    sub_id: i32,
+}
+
+impl ScriptConfig {
+    fn from_path(path: impl AsRef<std::path::Path>) -> anyhow::Result<Self> {
+        let path = path.as_ref();
+        if !path.exists() {
+            anyhow::bail!("Script config file does not exist: {}", path.display());
+        }
+
+        let content = std::fs::read_to_string(path).context("failed to read script config")?;
+        let config = toml::from_str(&content).context("failed to parse script config")?;
+        Ok(config)
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -55,9 +75,11 @@ impl FromStr for Profile {
 
 impl DeployCommand {
     pub fn execute(&self) -> anyhow::Result<()> {
+        let config = ScriptConfig::from_path("./script.toml")?;
+
         let manifest = Manifest::from_path("./Cargo.toml").context("failed to read Cargo.toml")?;
 
-        let content_dir = content_dir(self.id);
+        let content_dir = content_dir(config.deploy.user_id, config.deploy.sub_id);
 
         if !content_dir.exists() {
             tracing::info!("Creating content directory");
@@ -71,7 +93,8 @@ impl DeployCommand {
 
         let package = match manifest.workspace {
             Some(workspace) => {
-                let package = self
+                let package = config
+                    .deploy
                     .package
                     .as_ref()
                     .context("in a workspace, package name is required")?;
@@ -112,16 +135,6 @@ impl DeployCommand {
     }
 }
 
-#[derive(Debug, Clone, Copy, Parser)]
-struct PartialContentId {
-    /// User id of the content.
-    #[clap(long)]
-    user_id: i32,
-    /// Sub id of the content.
-    #[clap(long)]
-    sub_id: i32,
-}
-
 fn build_script(package: &str, profile: &str) -> anyhow::Result<()> {
     let mut cmd = Command::new("cargo");
     cmd.arg("build")
@@ -135,11 +148,11 @@ fn build_script(package: &str, profile: &str) -> anyhow::Result<()> {
     execute_command(cmd)
 }
 
-fn content_dir(id: PartialContentId) -> std::path::PathBuf {
+fn content_dir(user_id: i32, sub_id: i32) -> std::path::PathBuf {
     let mut path = lotus_data_dir();
     path.push("overrides");
-    path.push(id.user_id.to_string());
-    path.push(id.sub_id.to_string());
+    path.push(user_id.to_string());
+    path.push(sub_id.to_string());
     path
 }
 

@@ -1291,7 +1291,7 @@ dependencies = [
 
 [[package]]
 name = "lotus-sc"
-version = "0.1.5"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "cargo_toml",
@@ -1301,6 +1301,7 @@ dependencies = [
  "rmp-serde",
  "serde",
  "serde_json",
+ "toml",
  "tracing",
  "tracing-subscriber",
  "wasmtime",
