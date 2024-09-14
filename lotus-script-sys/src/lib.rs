@@ -73,8 +73,8 @@ pub mod var {
         pub fn set_f64(name: u64, value: f64);
         pub fn get_string(name: u64) -> u64;
         pub fn set_string(name: u64, value: u64);
-        pub fn get_bool(name: u64) -> bool;
-        pub fn set_bool(name: u64, value: bool);
+        pub fn get_bool(name: u64) -> i32;
+        pub fn set_bool(name: u64, value: i32);
         pub fn get_content_id(name: u64) -> u64;
         pub fn set_content_id(name: u64, value: u64);
     }

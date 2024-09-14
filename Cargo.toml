@@ -16,7 +16,7 @@ dirs = "5"
 image = { version = "0.25.2", default-features = false }
 lotus-bindgen-macros = { version = "0.1", path = "./lotus-bindgen-macros" }
 lotus-script = { version = "0.5", path = "./lotus-script" }
-lotus-script-sys = { version = "0.1", path = "./lotus-script-sys" }
+lotus-script-sys = { version = "0.2", path = "./lotus-script-sys" }
 lotus-shared = { version = "0.3", path = "./lotus-shared" }
 proc-macro2 = "1"
 quote = "1"

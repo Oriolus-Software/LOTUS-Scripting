@@ -49,12 +49,20 @@ impl VariableType for bool {
 
     fn get(name: &str) -> Self::Output {
         let name = FfiObject::new(&name);
-        unsafe { lotus_script_sys::var::get_bool(name.packed()) }
+        unsafe { lotus_script_sys::var::get_bool(name.packed()) != 0 }
     }
 
     fn set(&self, name: &str) {
         let name = FfiObject::new(&name);
-        unsafe { lotus_script_sys::var::set_bool(name.packed(), *self) }
+        unsafe {
+            lotus_script_sys::var::set_bool(
+                name.packed(),
+                match self {
+                    true => 1,
+                    false => 0,
+                },
+            )
+        }
     }
 }
 
