@@ -2,7 +2,9 @@ use lotus_script_sys::{FfiObject, FromFfi};
 use lotus_shared::content::ContentId;
 
 pub trait VariableType {
-    fn get(name: &str) -> Self;
+    type Output;
+
+    fn get(name: &str) -> Self::Output;
     fn set(&self, name: &str);
 }
 
@@ -14,7 +16,9 @@ pub enum Persistence {
 macro_rules! impl_variable_type {
     ($type:ty, $get:ident, $set:ident) => {
         impl VariableType for $type {
-            fn get(name: &str) -> Self {
+            type Output = $type;
+
+            fn get(name: &str) -> Self::Output {
                 let name = FfiObject::new(&name);
                 unsafe { lotus_script_sys::var::$get(name.packed()) as _ }
             }
@@ -41,7 +45,9 @@ impl_variable_type!(f32, get_f64, set_f64);
 impl_variable_type!(f64, get_f64, set_f64);
 
 impl VariableType for bool {
-    fn get(name: &str) -> Self {
+    type Output = bool;
+
+    fn get(name: &str) -> Self::Output {
         let name = FfiObject::new(&name);
         unsafe { lotus_script_sys::var::get_bool(name.packed()) }
     }
@@ -53,7 +59,9 @@ impl VariableType for bool {
 }
 
 impl VariableType for String {
-    fn get(name: &str) -> Self {
+    type Output = String;
+
+    fn get(name: &str) -> Self::Output {
         let name = FfiObject::new(&name);
         let ptr = unsafe { lotus_script_sys::var::get_string(name.packed()) };
         String::from_ffi(ptr)
@@ -66,7 +74,25 @@ impl VariableType for String {
     }
 }
 
+impl VariableType for &str {
+    type Output = String;
+
+    fn get(name: &str) -> Self::Output {
+        let name = FfiObject::new(&name);
+        let ptr = unsafe { lotus_script_sys::var::get_string(name.packed()) };
+        String::from_ffi(ptr)
+    }
+
+    fn set(&self, name: &str) {
+        let name = FfiObject::new(&name);
+        let value = FfiObject::new(&self.to_string());
+        unsafe { lotus_script_sys::var::set_string(name.packed(), value.packed()) }
+    }
+}
+
 impl VariableType for ContentId {
+    type Output = ContentId;
+
     fn get(name: &str) -> Self {
         let name = FfiObject::new(&name);
         let ptr = unsafe { lotus_script_sys::var::get_content_id(name.packed()) };
@@ -95,7 +121,7 @@ impl<T> Variable<T> {
 }
 
 impl<T: VariableType> Variable<T> {
-    pub fn get(&self) -> T {
+    pub fn get(&self) -> T::Output {
         T::get(&self.name)
     }
 

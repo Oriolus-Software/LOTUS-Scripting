@@ -20,7 +20,7 @@ where
         T::type_name()
     }
 
-    pub fn get(&self) -> T {
+    pub fn get(&self) -> T::Output {
         T::get(self.name)
     }
 
