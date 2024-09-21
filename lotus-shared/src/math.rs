@@ -1,6 +1,31 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Clone, Copy)]
+pub struct Vec2 {
+    pub x: f32,
+    pub y: f32,
+}
+
+impl Serialize for Vec2 {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        (self.x, self.y).serialize(serializer)
+    }
+}
+
+impl<'a> Deserialize<'a> for Vec2 {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'a>,
+    {
+        let (x, y) = <(f32, f32)>::deserialize(deserializer)?;
+        Ok(Self { x, y })
+    }
+}
+
+#[derive(Debug, Default, Clone, Copy)]
 pub struct UVec2 {
     pub x: u32,
     pub y: u32,

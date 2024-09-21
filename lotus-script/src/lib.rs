@@ -9,6 +9,7 @@ pub mod content;
 pub mod event;
 pub mod gizmos;
 pub mod graphics;
+pub mod input;
 pub mod log;
 pub mod macros;
 pub mod math;
@@ -23,10 +24,6 @@ pub mod prelude {
     pub use crate::action;
     pub use crate::log;
     pub use crate::message::{Message, MessageType};
-}
-
-pub mod input {
-    pub use lotus_shared::input::*;
 }
 
 pub trait Script {

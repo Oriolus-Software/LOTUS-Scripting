@@ -104,7 +104,7 @@ impl VariableType for ContentId {
     fn get(name: &str) -> Self {
         let name = FfiObject::new(&name);
         let ptr = unsafe { lotus_script_sys::var::get_content_id(name.packed()) };
-        ContentId::from_ffi(ptr)
+        FfiObject::from_packed(ptr).deserialize()
     }
 
     fn set(&self, name: &str) {

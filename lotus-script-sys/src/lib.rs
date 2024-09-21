@@ -106,6 +106,13 @@ pub mod action {
     }
 }
 
+pub mod input {
+    #[link(wasm_import_module = "input")]
+    extern "C" {
+        pub fn mouse_delta() -> u64;
+    }
+}
+
 pub trait FromFfi {
     type FfiType;
     fn from_ffi(ffi: Self::FfiType) -> Self;
