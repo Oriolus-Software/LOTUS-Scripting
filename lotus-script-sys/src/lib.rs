@@ -84,7 +84,7 @@ pub mod rand {
     #[link(wasm_import_module = "rand")]
     extern "C" {
         pub fn f64() -> f64;
-        /// Generate a random u64 in the range [min] to [max] inclusive.
+        /// Generate a random u64 in the range `min` to `max` inclusive.
         pub fn u64(min: u64, max: u64) -> u64;
         pub fn seed(seed: u64);
         pub fn random_seed();
@@ -151,12 +151,6 @@ impl FfiObject {
         packed[4..].copy_from_slice(&len.to_be_bytes());
 
         u64::from_be_bytes(packed)
-    }
-
-    pub fn packed_forget(self) -> u64 {
-        let packed = self.packed();
-        std::mem::forget(self);
-        packed
     }
 
     pub fn from_packed(packed: u64) -> Self {
