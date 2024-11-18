@@ -125,8 +125,33 @@ impl FromFfi for String {
     }
 }
 
+enum FfiObjectData {
+    Boxed(Box<[u8]>),
+    Raw(*mut u8, usize),
+}
+
+impl FfiObjectData {
+    fn as_slice(&self) -> &[u8] {
+        match self {
+            Self::Boxed(data) => data,
+            Self::Raw(ptr, len) => unsafe { std::slice::from_raw_parts(*ptr, *len) },
+        }
+    }
+}
+
+impl Drop for FfiObject {
+    fn drop(&mut self) {
+        match self.data {
+            FfiObjectData::Boxed(_) => {}
+            FfiObjectData::Raw(ptr, len) => unsafe {
+                std::alloc::dealloc(ptr, std::alloc::Layout::from_size_align(len, 8).unwrap())
+            },
+        }
+    }
+}
+
 pub struct FfiObject {
-    data: Box<[u8]>,
+    data: FfiObjectData,
 }
 
 impl FfiObject {
@@ -135,16 +160,18 @@ impl FfiObject {
             .expect("Failed to serialize value")
             .into_boxed_slice();
 
-        Self { data }
+        Self {
+            data: FfiObjectData::Boxed(data),
+        }
     }
 
     pub fn deserialize<T: DeserializeOwned>(&self) -> T {
-        rmp_serde::from_slice(&self.data).expect("Failed to deserialize value")
+        rmp_serde::from_slice(self.data.as_slice()).expect("Failed to deserialize value")
     }
 
     pub fn packed(&self) -> u64 {
-        let ptr = self.data.as_ptr() as u32;
-        let len = self.data.len() as u32;
+        let ptr = self.data.as_slice().as_ptr() as u32;
+        let len = self.data.as_slice().len() as u32;
 
         let mut packed = [0u8; 8];
         packed[..4].copy_from_slice(&ptr.to_be_bytes());
@@ -159,6 +186,9 @@ impl FfiObject {
         let len = u32::from_be_bytes(packed[4..].try_into().unwrap());
 
         let data = unsafe { std::slice::from_raw_parts(ptr as *const u8, len as usize) };
-        Self { data: data.into() }
+
+        Self {
+            data: FfiObjectData::Raw(data.as_ptr() as *mut u8, data.len()),
+        }
     }
 }
