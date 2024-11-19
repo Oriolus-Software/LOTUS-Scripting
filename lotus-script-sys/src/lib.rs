@@ -185,10 +185,8 @@ impl FfiObject {
         let ptr = u32::from_be_bytes(packed[..4].try_into().unwrap());
         let len = u32::from_be_bytes(packed[4..].try_into().unwrap());
 
-        let data = unsafe { std::slice::from_raw_parts(ptr as *const u8, len as usize) };
-
         Self {
-            data: FfiObjectData::Raw(data.as_ptr() as *mut u8, data.len()),
+            data: FfiObjectData::Raw(ptr as *mut u8, len as usize),
         }
     }
 }
