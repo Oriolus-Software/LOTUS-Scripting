@@ -1,6 +1,6 @@
 [package]
 name = "lotus-script"
-version = "0.5.6"
+version = "0.5.7"
 edition = "2021"
 description = "A library for creating LOTUS-Simulator scripts."
 license = "MIT/Apache-2.0"

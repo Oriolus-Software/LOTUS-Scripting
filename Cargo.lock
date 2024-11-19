@@ -1309,7 +1309,7 @@ dependencies = [
 
 [[package]]
 name = "lotus-script"
-version = "0.5.6"
+version = "0.5.7"
 dependencies = [
  "lotus-bindgen-macros",
  "lotus-script-sys",
@@ -1323,7 +1323,7 @@ dependencies = [
 
 [[package]]
 name = "lotus-script-sys"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "lotus-bindgen-macros",
  "rmp-serde",
