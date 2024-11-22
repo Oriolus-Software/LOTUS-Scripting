@@ -113,6 +113,17 @@ pub mod input {
     }
 }
 
+pub mod font {
+    #[link(wasm_import_module = "font")]
+    extern "C" {
+        pub fn bitmap_font_properties(font: u64) -> u64;
+
+        /// Returns: -1 if the font is not loaded.
+        /// Returns: >0 is the width of the text.
+        pub fn text_len(font: u64, text: u64, letter_spacing: i32) -> i32;
+    }
+}
+
 pub trait FromFfi {
     type FfiType;
     fn from_ffi(ffi: Self::FfiType) -> Self;

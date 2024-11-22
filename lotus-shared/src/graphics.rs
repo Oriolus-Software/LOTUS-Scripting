@@ -131,6 +131,11 @@ pub mod textures {
             letter_spacing: u32,
             full_color: Option<Color>,
         },
+        DrawTexture {
+            texture: ContentId,
+            source_rect: Option<(UVec2, UVec2)>,
+            target_rect: (UVec2, UVec2),
+        },
     }
 
     #[derive(Clone, Serialize, Deserialize)]

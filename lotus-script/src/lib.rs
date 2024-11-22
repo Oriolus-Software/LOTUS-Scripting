@@ -7,6 +7,7 @@ pub mod assets;
 pub mod content;
 #[doc(hidden)]
 pub mod event;
+pub mod font;
 pub mod gizmos;
 pub mod graphics;
 pub mod input;
