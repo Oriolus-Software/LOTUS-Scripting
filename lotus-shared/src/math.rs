@@ -76,6 +76,21 @@ impl<'a> Deserialize<'a> for Vec3 {
     }
 }
 
+#[derive(Debug, Default, Clone, Copy, Serialize, Deserialize)]
+pub struct Rectangle {
+    pub start: UVec2,
+    pub end: UVec2,
+}
+
+impl Rectangle {
+    pub fn new(start: UVec2, end: UVec2) -> Self {
+        assert!(start.x <= end.x);
+        assert!(start.y <= end.y);
+
+        Self { start, end }
+    }
+}
+
 #[cfg(feature = "bevy")]
 mod _bevy {
     use super::*;

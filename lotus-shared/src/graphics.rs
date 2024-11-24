@@ -104,7 +104,10 @@ pub mod textures {
 
     use serde::{Deserialize, Serialize};
 
-    use crate::{content::ContentId, math::UVec2};
+    use crate::{
+        content::ContentId,
+        math::{Rectangle, UVec2},
+    };
 
     use super::Color;
 
@@ -113,6 +116,21 @@ pub mod textures {
         pub width: u32,
         pub height: u32,
         pub data: Option<Cow<'a, [u8]>>,
+    }
+
+    #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+    #[serde(transparent)]
+    pub struct TextureHandle(u64);
+
+    #[cfg(feature = "internals")]
+    impl TextureHandle {
+        pub fn new(value: u64) -> Self {
+            Self(value)
+        }
+
+        pub fn id(&self) -> u64 {
+            self.0
+        }
     }
 
     #[derive(Clone, Serialize, Deserialize)]
@@ -133,9 +151,18 @@ pub mod textures {
         },
         DrawTexture {
             texture: ContentId,
-            source_rect: Option<(UVec2, UVec2)>,
-            target_rect: (UVec2, UVec2),
+            options: DrawTextureOpts,
         },
+        DrawScriptTexture {
+            handle: TextureHandle,
+            options: DrawTextureOpts,
+        },
+    }
+
+    #[derive(Clone, Copy, Serialize, Deserialize)]
+    pub struct DrawTextureOpts {
+        pub source_rect: Option<Rectangle>,
+        pub target_rect: Option<Rectangle>,
     }
 
     #[derive(Clone, Serialize, Deserialize)]

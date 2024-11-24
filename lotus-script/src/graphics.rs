@@ -6,20 +6,24 @@ pub mod textures {
 
     pub use lotus_shared::graphics::textures::*;
 
-    pub struct Texture(u64);
+    pub struct Texture(TextureHandle);
 
     impl Texture {
         #[must_use]
         pub fn create(options: TextureCreationOptions) -> Self {
             let options = FfiObject::new(&options);
 
-            unsafe { Self(lotus_script_sys::textures::create(options.packed())) }
+            unsafe {
+                Self(TextureHandle::new(lotus_script_sys::textures::create(
+                    options.packed(),
+                )))
+            }
         }
 
         pub fn add_action(&mut self, action: TextureAction) {
             let action = FfiObject::new(&action);
 
-            unsafe { lotus_script_sys::textures::add_action(self.0, action.packed()) }
+            unsafe { lotus_script_sys::textures::add_action(self.0.id(), action.packed()) }
         }
 
         pub fn draw_rect(&mut self, start: impl Into<UVec2>, end: impl Into<UVec2>, color: Color) {
@@ -35,7 +39,7 @@ pub mod textures {
         }
 
         pub fn get_pixel(&self, x: u32, y: u32) -> Color {
-            let packed = unsafe { lotus_script_sys::textures::get_pixel(self.0, x, y) };
+            let packed = unsafe { lotus_script_sys::textures::get_pixel(self.0.id(), x, y) };
             packed.into()
         }
 
@@ -58,11 +62,15 @@ pub mod textures {
 
         pub fn apply_to(&mut self, name: &str) {
             let name = FfiObject::new(&name);
-            unsafe { lotus_script_sys::textures::apply_to(self.0, name.packed()) }
+            unsafe { lotus_script_sys::textures::apply_to(self.0.id(), name.packed()) }
         }
 
         pub fn flush(&mut self) {
-            unsafe { lotus_script_sys::textures::flush_actions(self.0) }
+            unsafe { lotus_script_sys::textures::flush_actions(self.0.id()) }
+        }
+
+        pub fn handle(&self) -> TextureHandle {
+            self.0
         }
     }
 }
