@@ -149,10 +149,10 @@ pub mod textures {
             letter_spacing: u32,
             full_color: Option<Color>,
         },
-        DrawTexture {
-            texture: ContentId,
-            options: DrawTextureOpts,
-        },
+        // DrawTexture {
+        //     texture: ContentId,
+        //     options: DrawTextureOpts,
+        // },
         DrawScriptTexture {
             handle: TextureHandle,
             options: DrawTextureOpts,

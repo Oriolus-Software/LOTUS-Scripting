@@ -42,9 +42,9 @@ pub mod textures {
             options: DrawTextureOpts,
         ) {
             match texture.into() {
-                DrawableTexture::Content(texture) => {
-                    self.add_action(TextureAction::DrawTexture { texture, options });
-                }
+                // DrawableTexture::Content(texture) => {
+                //     self.add_action(TextureAction::DrawTexture { texture, options });
+                // }
                 DrawableTexture::Script(handle) => {
                     self.add_action(TextureAction::DrawScriptTexture { handle, options });
                 }
@@ -99,15 +99,16 @@ pub mod textures {
     }
 
     pub enum DrawableTexture {
-        Content(ContentId),
+        // TODO: Support content textures.
+        // Content(ContentId),
         Script(TextureHandle),
     }
 
-    impl From<ContentId> for DrawableTexture {
-        fn from(content: ContentId) -> Self {
-            Self::Content(content)
-        }
-    }
+    // impl From<ContentId> for DrawableTexture {
+    //     fn from(content: ContentId) -> Self {
+    //         Self::Content(content)
+    //     }
+    // }
 
     impl From<&Texture> for DrawableTexture {
         fn from(texture: &Texture) -> Self {
