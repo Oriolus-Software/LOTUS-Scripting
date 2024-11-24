@@ -56,11 +56,12 @@ pub mod messages {
 pub mod textures {
     #[link(wasm_import_module = "textures")]
     extern "C" {
-        pub fn create(options: u64) -> u16;
-        pub fn add_action(texture: u16, options: u64);
-        pub fn get_pixel(texture: u16, x: u32, y: u32) -> u32;
-        pub fn apply_to(texture: u16, name: u64);
-        pub fn flush_actions(texture: u16) -> u32;
+        pub fn create(options: u64) -> u32;
+        pub fn add_action(texture: u32, options: u64);
+        pub fn get_pixel(texture: u32, x: u32, y: u32) -> u32;
+        pub fn apply_to(texture: u32, name: u64);
+        pub fn flush_actions(texture: u32) -> u32;
+        pub fn dispose(texture: u32);
     }
 }
 

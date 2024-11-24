@@ -6,6 +6,7 @@ pub mod textures {
 
     pub use lotus_shared::graphics::textures::*;
 
+    #[derive(Debug)]
     pub struct Texture(TextureHandle);
 
     impl Texture {
@@ -95,6 +96,12 @@ pub mod textures {
 
         pub fn handle(&self) -> TextureHandle {
             self.0
+        }
+    }
+
+    impl Drop for Texture {
+        fn drop(&mut self) {
+            unsafe { lotus_script_sys::textures::dispose(self.0.id()) }
         }
     }
 
