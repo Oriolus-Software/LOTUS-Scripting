@@ -120,15 +120,15 @@ pub mod textures {
 
     #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
     #[serde(transparent)]
-    pub struct TextureHandle(u64);
+    pub struct TextureHandle(u16);
 
     #[cfg(feature = "internals")]
     impl TextureHandle {
-        pub fn new(value: u64) -> Self {
+        pub fn new(value: u16) -> Self {
             Self(value)
         }
 
-        pub fn id(&self) -> u64 {
+        pub fn id(&self) -> u16 {
             self.0
         }
     }

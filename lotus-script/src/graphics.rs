@@ -2,7 +2,7 @@ pub use lotus_shared::graphics::*;
 
 pub mod textures {
     use lotus_script_sys::FfiObject;
-    use lotus_shared::{content::ContentId, graphics::Color, math::UVec2};
+    use lotus_shared::{graphics::Color, math::UVec2};
 
     pub use lotus_shared::graphics::textures::*;
 
