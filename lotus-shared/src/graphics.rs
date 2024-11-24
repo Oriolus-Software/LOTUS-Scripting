@@ -165,7 +165,7 @@ pub mod textures {
         pub target_rect: Option<Rectangle>,
     }
 
-    #[derive(Clone, Serialize, Deserialize)]
+    #[derive(Clone, Copy, Serialize, Deserialize)]
     pub struct DrawPixel {
         pub pos: UVec2,
         pub color: Color,
