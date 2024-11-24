@@ -1,120 +1,108 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Default, Clone, Copy)]
-pub struct Vec2 {
-    pub x: f32,
-    pub y: f32,
+pub use glam::*;
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct Rectangle {
+    start: UVec2,
+    end: UVec2,
 }
 
-impl Serialize for Vec2 {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        (self.x, self.y).serialize(serializer)
+impl Rectangle {
+    pub fn new(start: UVec2, end: UVec2) -> Self {
+        assert!(start.x <= end.x);
+        assert!(start.y <= end.y);
+
+        Self { start, end }
+    }
+
+    pub fn from_size(start: UVec2, size: UVec2) -> Self {
+        Self::new(start, start + size)
+    }
+
+    #[inline(always)]
+    pub fn start(&self) -> UVec2 {
+        self.start
+    }
+
+    #[inline(always)]
+    pub fn end(&self) -> UVec2 {
+        self.end
+    }
+
+    #[inline(always)]
+    pub fn width(&self) -> u32 {
+        self.end.x - self.start.x
+    }
+
+    #[inline(always)]
+    pub fn height(&self) -> u32 {
+        self.end.y - self.start.y
+    }
+
+    #[inline(always)]
+    pub fn size(&self) -> UVec2 {
+        UVec2 {
+            x: self.width(),
+            y: self.height(),
+        }
+    }
+
+    #[inline]
+    pub fn contains(&self, point: UVec2) -> bool {
+        self.start.x <= point.x
+            && point.x <= self.end.x
+            && self.start.y <= point.y
+            && point.y <= self.end.y
+    }
+
+    #[inline]
+    pub fn intersects(&self, other: &Rectangle) -> bool {
+        self.start.x <= other.end.x
+            && self.end.x >= other.start.x
+            && self.start.y <= other.end.y
+            && self.end.y >= other.start.y
     }
 }
 
-impl<'a> Deserialize<'a> for Vec2 {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'a>,
-    {
-        let (x, y) = <(f32, f32)>::deserialize(deserializer)?;
-        Ok(Self { x, y })
-    }
-}
-
-#[derive(Debug, Default, Clone, Copy)]
-pub struct UVec2 {
-    pub x: u32,
-    pub y: u32,
-}
-
-impl Serialize for UVec2 {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        (self.x, self.y).serialize(serializer)
-    }
-}
-
-impl<'a> Deserialize<'a> for UVec2 {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'a>,
-    {
-        let (x, y) = <(u32, u32)>::deserialize(deserializer)?;
-        Ok(Self { x, y })
-    }
-}
-
-#[derive(Debug, Default, Clone, Copy)]
-pub struct Vec3 {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-}
-
-impl Serialize for Vec3 {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        (self.x, self.y, self.z).serialize(serializer)
-    }
-}
-
-impl<'a> Deserialize<'a> for Vec3 {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'a>,
-    {
-        let (x, y, z) = <(f32, f32, f32)>::deserialize(deserializer)?;
-        Ok(Self { x, y, z })
-    }
-}
-
-#[cfg(feature = "bevy")]
-mod _bevy {
+#[cfg(test)]
+mod tests {
     use super::*;
 
-    impl From<bevy::math::UVec2> for UVec2 {
-        fn from(value: bevy::math::UVec2) -> Self {
-            Self {
-                x: value.x,
-                y: value.y,
-            }
-        }
+    #[test]
+    fn test_rectangle_creation() {
+        let start = UVec2 { x: 0, y: 0 };
+        let end = UVec2 { x: 5, y: 5 };
+        let rect = Rectangle::new(start, end);
+        assert_eq!(rect.start(), start);
+        assert_eq!(rect.end(), end);
     }
 
-    impl From<UVec2> for bevy::math::UVec2 {
-        fn from(value: UVec2) -> Self {
-            Self {
-                x: value.x,
-                y: value.y,
-            }
-        }
+    #[test]
+    fn test_rectangle_width_and_height() {
+        let start = UVec2 { x: 1, y: 1 };
+        let end = UVec2 { x: 4, y: 6 };
+        let rect = Rectangle::new(start, end);
+        assert_eq!(rect.width(), 3);
+        assert_eq!(rect.height(), 5);
     }
 
-    impl From<bevy::math::Vec3> for Vec3 {
-        fn from(value: bevy::math::Vec3) -> Self {
-            Self {
-                x: value.x,
-                y: value.y,
-                z: value.z,
-            }
-        }
+    #[test]
+    fn test_rectangle_contains() {
+        let start = UVec2 { x: 0, y: 0 };
+        let end = UVec2 { x: 10, y: 10 };
+        let rect = Rectangle::new(start, end);
+        assert!(rect.contains(UVec2 { x: 5, y: 5 }));
+        assert!(!rect.contains(UVec2 { x: 11, y: 5 }));
     }
 
-    impl From<Vec3> for bevy::math::Vec3 {
-        fn from(value: Vec3) -> Self {
-            Self {
-                x: value.x,
-                y: value.y,
-                z: value.z,
-            }
-        }
+    #[test]
+    fn test_rectangle_intersects() {
+        let rect1 = Rectangle::new(UVec2 { x: 0, y: 0 }, UVec2 { x: 5, y: 5 });
+        let rect2 = Rectangle::new(UVec2 { x: 3, y: 3 }, UVec2 { x: 7, y: 7 });
+        let rect3 = Rectangle::new(UVec2 { x: 6, y: 6 }, UVec2 { x: 8, y: 8 });
+
+        assert!(rect1.intersects(&rect2));
+        assert!(!rect1.intersects(&rect3));
     }
 }

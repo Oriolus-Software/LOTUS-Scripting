@@ -7,6 +7,7 @@ license = "MIT/Apache-2.0"
 
 [features]
 default = []
+internal = []
 ffi = ["dep:lotus-script-sys"]
 engine = ["bevy", "image"]
 bevy = ["dep:bevy"]
@@ -14,6 +15,7 @@ image = ["dep:image"]
 
 [dependencies]
 bevy = { workspace = true, optional = true, features = ["bevy_color"] }
+glam = { version = "0.29", features = ["serde"] }
 image = { workspace = true, optional = true }
 lotus-script-sys = { workspace = true, optional = true }
 serde = { workspace = true, features = ["derive"] }

@@ -28,13 +28,18 @@ pub mod prelude {
 }
 
 pub trait Script {
+    /// Initialize the script.
     fn init(&mut self) {}
+
+    /// Register actions.
     fn actions() -> Vec<action::RegisterAction> {
         Default::default()
     }
 
+    /// Tick the script.
     fn tick(&mut self) {}
 
+    /// Handle a message.
     #[allow(unused_variables)]
     fn on_message(&mut self, msg: Message) {}
 }

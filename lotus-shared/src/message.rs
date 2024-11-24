@@ -8,6 +8,7 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 /// ```no_run
 /// # use serde::{Deserialize, Serialize};
 /// # use lotus_script::prelude::*;
+/// # use lotus_shared::message::{Message, MessageType};
 /// #[derive(Serialize, Deserialize)]
 /// struct TestMessage {
 ///     value: i32,
@@ -116,10 +117,15 @@ impl Message {
 /// Represents a message target.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum MessageTarget {
+    /// The script itself.
     Myself,
+    /// The child script at the given index.
     ChildByIndex(usize),
+    /// All scripts of this vehicle.
     Broadcast,
+    /// All scripts of this vehicle except this one.
     BroadcastExceptSelf,
+    /// The parent script.
     Parent,
 }
 
