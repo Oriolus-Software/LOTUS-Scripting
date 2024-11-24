@@ -1,10 +1,12 @@
 use serde::{Deserialize, Serialize};
 
+/// A unique identifier for a content item.
 #[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub struct ContentId {
+    /// The user ID of the content item.
     pub user_id: i32,
+    /// The sub ID of the content item.
     pub sub_id: i32,
-    pub version: f64,
 }
 
 impl Eq for ContentId {}
@@ -14,7 +16,6 @@ impl std::hash::Hash for ContentId {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         self.user_id.hash(state);
         self.sub_id.hash(state);
-        self.version.to_bits().hash(state);
     }
 }
 

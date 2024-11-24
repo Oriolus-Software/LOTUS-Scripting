@@ -1321,6 +1321,7 @@ name = "lotus-shared"
 version = "0.3.3"
 dependencies = [
  "bevy",
+ "glam",
  "image",
  "lotus-script-sys",
  "serde",

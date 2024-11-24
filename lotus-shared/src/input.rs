@@ -5,9 +5,13 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ActionStateKind {
+    /// The action is not being performed.
     None,
+    /// The action has just been pressed.
     JustPressed,
+    /// The action is currently pressed.
     Pressed,
+    /// The action has just been released.
     JustReleased,
 }
 

@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+/// A color in the RGBA format.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Color {
     pub r: u8,
@@ -18,16 +19,12 @@ impl Color {
     pub const CYAN: Self = Self::rgb(0, 255, 255);
     pub const MAGENTA: Self = Self::rgb(255, 0, 255);
 
-    pub const fn new(r: u8, g: u8, b: u8, a: u8) -> Self {
-        Self { r, g, b, a }
-    }
-
     pub const fn rgb(r: u8, g: u8, b: u8) -> Self {
-        Self::new(r, g, b, 255)
+        Self::rgba(r, g, b, 255)
     }
 
     pub const fn rgba(r: u8, g: u8, b: u8, a: u8) -> Self {
-        Self::new(r, g, b, a)
+        Self { r, g, b, a }
     }
 }
 
@@ -104,26 +101,56 @@ pub mod textures {
 
     use serde::{Deserialize, Serialize};
 
-    use crate::{content::ContentId, math::UVec2};
+    use crate::{
+        content::ContentId,
+        math::{Rectangle, UVec2},
+    };
 
     use super::Color;
 
+    /// Options for creating a texture.
     #[derive(Clone, Serialize, Deserialize)]
     pub struct TextureCreationOptions<'a> {
+        /// The width of the texture.
         pub width: u32,
+        /// The height of the texture.
         pub height: u32,
+        /// The data of the texture. This is currently a placeholder for future use.
         pub data: Option<Cow<'a, [u8]>>,
     }
 
+    /// A handle to a texture.
+    #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+    #[serde(transparent)]
+    pub struct TextureHandle(u32);
+
+    #[cfg(feature = "internal")]
+    impl TextureHandle {
+        /// Create a new texture handle.
+        pub fn new(value: u32) -> Self {
+            Self(value)
+        }
+
+        /// Get the ID of the texture handle.
+        pub fn id(&self) -> u32 {
+            self.0
+        }
+    }
+
+    /// An action to perform on a texture.
     #[derive(Clone, Serialize, Deserialize)]
     pub enum TextureAction {
+        /// Clear the texture with a color.
         Clear(Color),
+        /// Draw pixels on the texture.
         DrawPixels(Box<[DrawPixel]>),
+        /// Draw a rectangle on the texture.
         DrawRect {
             start: UVec2,
             end: UVec2,
             color: Color,
         },
+        /// Draw text on the texture.
         DrawText {
             font: ContentId,
             text: String,
@@ -131,16 +158,32 @@ pub mod textures {
             letter_spacing: u32,
             full_color: Option<Color>,
         },
-        DrawTexture {
-            texture: ContentId,
-            source_rect: Option<(UVec2, UVec2)>,
-            target_rect: (UVec2, UVec2),
+        // DrawTexture {
+        //     texture: ContentId,
+        //     options: DrawTextureOpts,
+        // },
+        /// Draw a script texture on the texture.
+        DrawScriptTexture {
+            handle: TextureHandle,
+            options: DrawTextureOpts,
         },
     }
 
-    #[derive(Clone, Serialize, Deserialize)]
+    /// Options for drawing a texture.
+    #[derive(Default, Clone, Copy, Serialize, Deserialize)]
+    pub struct DrawTextureOpts {
+        /// The source rectangle of the texture to draw.
+        pub source_rect: Option<Rectangle>,
+        /// The target rectangle of the texture to draw to.
+        pub target_rect: Option<Rectangle>,
+    }
+
+    /// A pixel to draw on a texture.
+    #[derive(Clone, Copy, Serialize, Deserialize)]
     pub struct DrawPixel {
+        /// The position of the pixel.
         pub pos: UVec2,
+        /// The color of the pixel.
         pub color: Color,
     }
 
