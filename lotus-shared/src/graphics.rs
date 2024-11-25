@@ -159,7 +159,7 @@ pub mod textures {
         },
     }
 
-    #[derive(Clone, Copy, Serialize, Deserialize)]
+    #[derive(Default, Clone, Copy, Serialize, Deserialize)]
     pub struct DrawTextureOpts {
         pub source_rect: Option<Rectangle>,
         pub target_rect: Option<Rectangle>,
