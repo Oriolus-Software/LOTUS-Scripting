@@ -16,9 +16,7 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 /// }
 ///
 /// impl MessageType for TestMessage {
-///     fn id() -> &'static str {
-///         "test_message"
-///     }
+///     const MESSAGE_META: MessageMeta = MessageMeta::new("test", "message");
 /// }
 ///
 /// fn handle(message: &Message) {
@@ -34,13 +32,19 @@ pub struct Message {
     value: serde_json::Value,
 }
 
+/// Represents the metadata for a message type.
+///
+/// The combination of `namespace` and `identifier` should be unique for each message type.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct MessageMeta {
+    /// The namespace of the message type.
     pub namespace: Cow<'static, str>,
+    /// The identifier of the message type.
     pub identifier: Cow<'static, str>,
 }
 
 impl MessageMeta {
+    /// Creates a new message meta.
     pub const fn new(namespace: &'static str, identifier: &'static str) -> Self {
         Self {
             namespace: Cow::Borrowed(namespace),
@@ -50,7 +54,7 @@ impl MessageMeta {
 }
 
 /// Represents a message type that can be sent between scripts or from the engine.
-/// The [MessageType::id] method should return a globally unique identifier for the message type. If in doubt, use a UUID.
+/// The [MessageType::MESSAGE_META] constant should return a globally unique message meta for the message type.
 pub trait MessageType: Serialize + DeserializeOwned {
     /// The metadata for the message type.
     const MESSAGE_META: MessageMeta;
