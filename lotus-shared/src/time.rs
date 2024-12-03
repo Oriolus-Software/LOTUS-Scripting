@@ -1,14 +1,12 @@
 #[cfg(feature = "bevy")]
-use bevy::{prelude::Resource, reflect::Reflect};
+use bevy::{
+    prelude::{ReflectResource, Resource},
+    reflect::Reflect,
+};
 use time::PrimitiveDateTime;
 
-#[cfg(feature = "bevy")]
-#[derive(Resource, Reflect)]
-pub struct GameTime {
-    time_unix_micros: i64,
-}
-
-#[cfg(not(feature = "bevy"))]
+#[cfg_attr(feature = "bevy", derive(Resource, Reflect))]
+#[cfg_attr(feature = "bevy", reflect(Resource))]
 pub struct GameTime {
     time_unix_micros: i64,
 }
@@ -19,7 +17,9 @@ impl GameTime {
     }
 
     pub fn days_since_vernal_equinox_24(&self) -> f64 {
-        (self.time_unix_micros - 1710975600000000) as f64 / 86400.0
+        let diff = self.time_unix_micros - 1_710_975_600_000_000;
+        let r = diff as f64 / 86_400_000_000.0;
+        r
     }
 
     pub fn set_time(&mut self, time: PrimitiveDateTime) {
@@ -31,7 +31,7 @@ impl Default for GameTime {
     fn default() -> Self {
         Self {
             // 2024-06-21 12:00:00
-            time_unix_micros: 1_718_928_000_000_000,
+            time_unix_micros: 1718967600000000,
         }
     }
 }
