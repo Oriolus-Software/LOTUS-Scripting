@@ -1,5 +1,7 @@
 //! Handle messages between scripts or from the engine.
 //! See [Message] and [MessageType] for more information.
+use std::borrow::Cow;
+
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
 /// Represents a message that can be sent between scripts or from the engine.
@@ -28,15 +30,30 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 /// # handle(&Message::new(TestMessage { value: 42 }));
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Message {
-    id: String,
+    meta: MessageMeta,
     value: serde_json::Value,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub struct MessageMeta {
+    pub namespace: Cow<'static, str>,
+    pub identifier: Cow<'static, str>,
+}
+
+impl MessageMeta {
+    pub const fn new(namespace: &'static str, identifier: &'static str) -> Self {
+        Self {
+            namespace: Cow::Borrowed(namespace),
+            identifier: Cow::Borrowed(identifier),
+        }
+    }
 }
 
 /// Represents a message type that can be sent between scripts or from the engine.
 /// The [MessageType::id] method should return a globally unique identifier for the message type. If in doubt, use a UUID.
 pub trait MessageType: Serialize + DeserializeOwned {
-    /// The identifier for the message type.
-    fn id() -> &'static str;
+    /// The metadata for the message type.
+    const MESSAGE_META: MessageMeta;
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -63,19 +80,19 @@ impl Message {
     /// Creates a new message with the given value.
     pub fn new<T: MessageType>(value: T) -> Self {
         Self {
-            id: T::id().to_string(),
+            meta: T::MESSAGE_META.clone(),
             value: serde_json::to_value(value).unwrap(),
         }
     }
 
-    /// Returns the message type ID.
-    pub fn id(&self) -> &str {
-        &self.id
+    /// Returns the message type metadata.
+    pub fn meta(&self) -> &MessageMeta {
+        &self.meta
     }
 
     /// Returns the message value as the given type. Returns a [MessageValueError] if the message has a different type.
     pub fn value<T: MessageType>(&self) -> Result<T, MessageValueError> {
-        if self.id != T::id() {
+        if self.meta != T::MESSAGE_META {
             return Err(MessageValueError::InvalidType);
         }
 
@@ -85,7 +102,7 @@ impl Message {
 
     /// Returns `true` if the message has the given type.
     pub fn has_type<T: MessageType>(&self) -> bool {
-        self.id == T::id()
+        self.meta == T::MESSAGE_META
     }
 
     /// Handle the message with the given handler function.
@@ -135,15 +152,13 @@ mod tests {
     }
 
     impl MessageType for TestMessage {
-        fn id() -> &'static str {
-            "test_message"
-        }
+        const MESSAGE_META: MessageMeta = MessageMeta::new("test", "message");
     }
 
     #[test]
     fn test_message() {
         let message = Message::new(TestMessage { value: 42 });
-        assert_eq!(message.id(), "test_message");
+        assert_eq!(message.meta(), &TestMessage::MESSAGE_META);
 
         let value = message.value::<TestMessage>().unwrap();
 

@@ -1,3 +1,4 @@
+use lotus_shared::message::MessageMeta;
 use serde::{Deserialize, Serialize};
 
 use super::MessageType;
@@ -20,9 +21,7 @@ impl TriggerEvent {
 }
 
 impl MessageType for TriggerEvent {
-    fn id() -> &'static str {
-        "builtin:trigger_event"
-    }
+    const MESSAGE_META: MessageMeta = MessageMeta::new("builtin", "trigger_event");
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -49,16 +48,12 @@ pub struct ButtonEvent {
 }
 
 impl MessageType for ButtonEvent {
-    fn id() -> &'static str {
-        "builtin:button_event"
-    }
+    const MESSAGE_META: MessageMeta = MessageMeta::new("builtin", "button_event");
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BatterySwitch(pub bool);
 
 impl MessageType for BatterySwitch {
-    fn id() -> &'static str {
-        "builtin:battery_switch"
-    }
+    const MESSAGE_META: MessageMeta = MessageMeta::new("builtin", "battery_switch");
 }
