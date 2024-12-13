@@ -8,13 +8,14 @@ use time::{Date, Duration, PrimitiveDateTime, Time};
 #[cfg_attr(feature = "bevy", derive(Resource, Reflect))]
 #[cfg_attr(feature = "bevy", reflect(Resource))]
 pub struct GameTime {
+    speed_multiplier: f32,
     time_unix_micros: i64,
 }
 
 impl GameTime {
     #[cfg(feature = "engine")]
     pub fn increase(&mut self, seconds: f32) {
-        self.time_unix_micros += (seconds * 1_000_000.0).round() as i64;
+        self.time_unix_micros += (seconds * 1_000_000.0 * self.speed_multiplier).round() as i64;
     }
 
     #[cfg(feature = "engine")]
@@ -41,12 +42,23 @@ impl GameTime {
             (self.time_unix_micros % 1_000_000 * 1_000) as i32,
         )
     }
+
+    #[cfg(feature = "engine")]
+    pub fn speed_multiplier(&self) -> f32 {
+        self.speed_multiplier
+    }
+
+    #[cfg(feature = "engine")]
+    pub fn set_speed_multiplier(&mut self, speed_multiplier: f32) {
+        self.speed_multiplier = speed_multiplier;
+    }
 }
 
 #[cfg(feature = "engine")]
 impl Default for GameTime {
     fn default() -> Self {
         Self {
+            speed_multiplier: 1.0,
             // 2024-06-21 12:00:00
             time_unix_micros: 1718967600000000,
         }
