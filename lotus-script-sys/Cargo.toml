@@ -1,6 +1,6 @@
 [package]
 name = "lotus-script-sys"
-version = "0.2.3"
+version = "0.3.0"
 edition = "2021"
 description = "FFI bindings for LOTUS-Simulator scripts."
 license = "MIT/Apache-2.0"
