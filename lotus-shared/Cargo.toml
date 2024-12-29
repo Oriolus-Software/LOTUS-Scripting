@@ -9,9 +9,10 @@ license = "MIT/Apache-2.0"
 default = []
 internal = []
 ffi = ["dep:lotus-script-sys"]
-engine = ["bevy", "image"]
+engine = ["bevy", "image", "time"]
 bevy = ["dep:bevy"]
 image = ["dep:image"]
+time = ["dep:time"]
 
 [dependencies]
 bevy = { workspace = true, optional = true, features = ["bevy_color"] }
@@ -22,3 +23,4 @@ serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
 serde_repr.workspace = true
 thiserror.workspace = true
+time = { workspace = true, optional = true }
