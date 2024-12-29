@@ -45,6 +45,16 @@ mod _engine {
         pub fn set_speed_multiplier(&mut self, speed_multiplier: f32) {
             self.speed_multiplier = speed_multiplier;
         }
+
+        /// Returns the time of day normalized to 0-1
+        pub fn day_time(&self) -> f32 {
+            (self.time_unix_micros % MICROS_IN_DAY) as f32 / MICROS_IN_DAY as f32
+        }
+
+        /// Returns the day of the week, 0 = Monday
+        pub fn day_of_week(&self) -> u8 {
+            ((self.time_unix_micros / MICROS_IN_DAY + 3) % 7) as u8
+        }
     }
 }
 
@@ -72,8 +82,9 @@ impl Default for GameTime {
     fn default() -> Self {
         Self {
             speed_multiplier: 1.0,
-            // 2024-06-21 12:00:00
-            time_unix_micros: 1718967600000000,
+            time_unix_micros: 1732283105383311,
         }
     }
 }
+
+const MICROS_IN_DAY: i64 = 86_400_000_000;
