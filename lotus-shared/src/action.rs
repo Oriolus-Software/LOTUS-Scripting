@@ -3,7 +3,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
     input::{ActionState, KeyCode},
-    message::MessageType,
+    message::{MessageMeta, MessageType},
 };
 
 /// Describes an action that can be registered with the engine.
@@ -21,9 +21,7 @@ pub struct ActionEvent {
 }
 
 impl MessageType for ActionEvent {
-    fn id() -> &'static str {
-        "builtin:action_event"
-    }
+    const MESSAGE_META: MessageMeta = MessageMeta::new("builtin", "action_event", None);
 }
 
 /// Describes the kind of action that was triggered.
