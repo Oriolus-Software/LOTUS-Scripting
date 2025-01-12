@@ -86,5 +86,3 @@ impl Default for GameTime {
         }
     }
 }
-
-const MICROS_IN_DAY: i64 = 86_400_000_000;
