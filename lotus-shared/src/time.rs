@@ -24,6 +24,8 @@ mod _engine {
 
     use super::*;
 
+    const MICROS_IN_DAY: i64 = 86_400_000_000;
+
     impl GameTime {
         pub fn increase(&mut self, seconds: f32) {
             self.time_unix_micros += (seconds * 1_000_000.0 * self.speed_multiplier).round() as i64;
