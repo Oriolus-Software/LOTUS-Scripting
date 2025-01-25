@@ -35,7 +35,7 @@ pub struct Message {
 
 /// Represents the metadata for a message type.
 ///
-/// The combination of `namespace` and `identifier` should be unique for each message type.
+/// The combination of `namespace` and `identifier` should be globally unique for each message type.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct MessageMeta {
     /// The namespace of the message type.
@@ -137,11 +137,12 @@ impl Message {
 
     /// Sends the message to the given target.
     #[cfg(feature = "ffi")]
-    pub fn send(&self, target: MessageTarget) {
+    pub fn send(&self, targets: impl IntoIterator<Item = MessageTarget>) {
         let this = lotus_script_sys::FfiObject::new(self);
-        let target = lotus_script_sys::FfiObject::new(&target);
+        let targets = targets.into_iter().collect::<Vec<_>>();
+        let targets = lotus_script_sys::FfiObject::new(&targets);
 
-        unsafe { lotus_script_sys::messages::send(target.packed(), this.packed()) }
+        unsafe { lotus_script_sys::messages::send(targets.packed(), this.packed()) }
     }
 }
 
@@ -152,12 +153,54 @@ pub enum MessageTarget {
     Myself,
     /// The child script at the given index.
     ChildByIndex(usize),
-    /// All scripts of this vehicle.
-    Broadcast,
-    /// All scripts of this vehicle except this one.
-    BroadcastExceptSelf,
+    /// To all modules in the cockpit with the given index.
+    Cockpit(u8),
+    /// Broadcast to scripts based on the specified scope.
+    Broadcast {
+        /// Whether to include coupled vehicles.
+        across_couplings: bool,
+        /// Whether to include the sending script.
+        include_self: bool,
+    },
+    /// Send to a specific coupling.
+    SendAcrossCoupling(Coupling),
     /// The parent script.
     Parent,
+}
+
+impl MessageTarget {
+    /// Helper to create a broadcast target that excludes self
+    pub fn broadcast_except_self(across_couplings: bool) -> Self {
+        Self::Broadcast {
+            across_couplings,
+            include_self: false,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Coupling {
+    /// The coupling to the front vehicle.
+    Front,
+    /// The coupling to the rear vehicle.
+    Rear,
+}
+
+impl Coupling {
+    /// Opens the given bus.
+    pub fn open_bus(&self, _bus: &str) {
+        todo!()
+    }
+
+    /// Closes the given bus.
+    pub fn close_bus(&self, _bus: &str) {
+        todo!()
+    }
+
+    /// Returns `true` if the given bus is open.
+    pub fn is_open(&self, _bus: &str) -> bool {
+        todo!()
+    }
 }
 
 #[cfg(test)]
@@ -172,7 +215,7 @@ mod tests {
     }
 
     impl MessageType for TestMessage {
-        const MESSAGE_META: MessageMeta = MessageMeta::new("test", "message", None);
+        const MESSAGE_META: MessageMeta = MessageMeta::new("test", "message", Some("ibis"));
     }
 
     #[test]

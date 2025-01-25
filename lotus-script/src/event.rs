@@ -58,7 +58,7 @@ pub struct ButtonEvent {
 pub struct FloatInputEvent {
     pub id: String,
     pub value: f32,
-    pub cockpit_index: i32,
+    pub cockpit_index: u8,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
