@@ -157,6 +157,7 @@ pub mod textures {
             top_left: UVec2,
             letter_spacing: u32,
             full_color: Option<Color>,
+            alpha_mode: AlphaMode,
         },
         // DrawTexture {
         //     texture: ContentId,
@@ -167,6 +168,22 @@ pub mod textures {
             handle: TextureHandle,
             options: DrawTextureOpts,
         },
+    }
+
+    /// Controls how alpha (transparency) is handled when drawing.
+    #[derive(Debug, Default, Clone, Copy, Serialize, Deserialize)]
+    pub enum AlphaMode {
+        /// The texture is drawn completely opaque, ignoring alpha values.
+        /// Any pixels drawn will completely replace the existing pixels.
+        #[default]
+        Opaque,
+        /// Alpha values below the threshold are considered fully transparent,
+        /// while values above or equal to the threshold are considered fully opaque.
+        /// The threshold should be between 0.0 and 1.0.
+        Mask(f32),
+        /// Alpha values are used to blend the new pixels with existing pixels.
+        /// The alpha channel determines the opacity of each pixel being drawn.
+        Blend,
     }
 
     /// Options for drawing a texture.
