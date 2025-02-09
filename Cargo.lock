@@ -1443,7 +1443,7 @@ dependencies = [
 
 [[package]]
 name = "lotus-script"
-version = "0.6.0"
+version = "0.6.1"
 dependencies = [
  "lotus-bindgen-macros",
  "lotus-script-sys",
@@ -1467,7 +1467,7 @@ dependencies = [
 
 [[package]]
 name = "lotus-shared"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "bevy",
  "glam",
