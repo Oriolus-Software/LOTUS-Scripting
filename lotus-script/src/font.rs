@@ -6,6 +6,11 @@ pub use lotus_shared::font::*;
 pub struct BitmapFont(ContentId);
 
 impl BitmapFont {
+    /// Create a new bitmap font from a content id.
+    pub fn new(content_id: ContentId) -> Self {
+        Self(content_id)
+    }
+
     /// Get the properties of this font.
     /// Returns `None` if the font is not currently loaded. It will be loaded in the background.
     /// Just call this function again later until it returns `Some`.
