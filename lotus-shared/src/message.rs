@@ -1,5 +1,7 @@
 //! Handle messages between scripts or from the engine.
 //! See [Message] and [MessageType] for more information.
+use std::borrow::Cow;
+
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
 /// Represents a message that can be sent between scripts or from the engine.
@@ -15,9 +17,7 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 /// }
 ///
 /// impl MessageType for TestMessage {
-///     fn id() -> &'static str {
-///         "test_message"
-///     }
+///     const MESSAGE_META: MessageMeta = MessageMeta::new("test", "message");
 /// }
 ///
 /// fn handle(message: &Message) {
@@ -29,15 +29,60 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 /// # handle(&Message::new(TestMessage { value: 42 }));
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Message {
-    id: String,
+    meta: MessageMeta,
     value: serde_json::Value,
 }
 
+/// Represents the metadata for a message type.
+///
+/// The combination of `namespace` and `identifier` should be globally unique for each message type.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub struct MessageMeta {
+    /// The namespace of the message type.
+    pub namespace: Cow<'static, str>,
+    /// The identifier of the message type.
+    pub identifier: Cow<'static, str>,
+    /// The bus the message should be sent on.
+    pub bus: Option<Cow<'static, str>>,
+}
+
+impl MessageMeta {
+    /// Creates a new message meta.
+    pub const fn new(
+        namespace: &'static str,
+        identifier: &'static str,
+        bus: Option<&'static str>,
+    ) -> Self {
+        Self {
+            namespace: Cow::Borrowed(namespace),
+            identifier: Cow::Borrowed(identifier),
+            bus: match bus {
+                Some(bus) => Some(Cow::Borrowed(bus)),
+                None => None,
+            },
+        }
+    }
+}
+
 /// Represents a message type that can be sent between scripts or from the engine.
-/// The [MessageType::id] method should return a globally unique identifier for the message type. If in doubt, use a UUID.
+/// The [MessageType::MESSAGE_META] constant should return a globally unique message meta for the message type.
 pub trait MessageType: Serialize + DeserializeOwned {
-    /// The identifier for the message type.
-    fn id() -> &'static str;
+    /// The metadata for the message type.
+    const MESSAGE_META: MessageMeta;
+}
+
+#[macro_export]
+macro_rules! message_type {
+    ($type:ty, $namespace:expr, $identifier:expr, $bus:expr) => {
+        impl MessageType for $type {
+            const MESSAGE_META: MessageMeta = MessageMeta::new($namespace, $identifier, Some($bus));
+        }
+    };
+    ($type:ty, $namespace:expr, $identifier:expr) => {
+        impl MessageType for $type {
+            const MESSAGE_META: MessageMeta = MessageMeta::new($namespace, $identifier, None);
+        }
+    };
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -64,19 +109,19 @@ impl Message {
     /// Creates a new message with the given value.
     pub fn new<T: MessageType>(value: T) -> Self {
         Self {
-            id: T::id().to_string(),
+            meta: T::MESSAGE_META.clone(),
             value: serde_json::to_value(value).unwrap(),
         }
     }
 
-    /// Returns the message type ID.
-    pub fn id(&self) -> &str {
-        &self.id
+    /// Returns the message type metadata.
+    pub fn meta(&self) -> &MessageMeta {
+        &self.meta
     }
 
     /// Returns the message value as the given type. Returns a [MessageValueError] if the message has a different type.
     pub fn value<T: MessageType>(&self) -> Result<T, MessageValueError> {
-        if self.id != T::id() {
+        if self.meta != T::MESSAGE_META {
             return Err(MessageValueError::InvalidType);
         }
 
@@ -86,7 +131,7 @@ impl Message {
 
     /// Returns `true` if the message has the given type.
     pub fn has_type<T: MessageType>(&self) -> bool {
-        self.id == T::id()
+        self.meta == T::MESSAGE_META
     }
 
     /// Handle the message with the given handler function.
@@ -103,15 +148,20 @@ impl Message {
             Err(MessageValueError::Serialization(e)) => Err(MessageHandleError::Serialization(e)),
         }
     }
+}
 
-    /// Sends the message to the given target.
-    #[cfg(feature = "ffi")]
-    pub fn send(&self, target: MessageTarget) {
-        let this = lotus_script_sys::FfiObject::new(self);
-        let target = lotus_script_sys::FfiObject::new(&target);
+/// Sends the message to the given targets.
+#[cfg(feature = "ffi")]
+pub fn send_message<T: MessageType + Clone>(
+    message: &T,
+    targets: impl IntoIterator<Item = MessageTarget>,
+) {
+    let message = Message::new(message.clone());
+    let this = lotus_script_sys::FfiObject::new(&message);
+    let targets = targets.into_iter().collect::<Vec<_>>();
+    let targets = lotus_script_sys::FfiObject::new(&targets);
 
-        unsafe { lotus_script_sys::messages::send(target.packed(), this.packed()) }
-    }
+    unsafe { lotus_script_sys::messages::send(targets.packed(), this.packed()) }
 }
 
 /// Represents a message target.
@@ -121,12 +171,59 @@ pub enum MessageTarget {
     Myself,
     /// The child script at the given index.
     ChildByIndex(usize),
-    /// All scripts of this vehicle.
-    Broadcast,
-    /// All scripts of this vehicle except this one.
-    BroadcastExceptSelf,
+    /// To all modules in the cockpit with the given index.
+    Cockpit(u8),
+    /// Broadcast to scripts based on the specified scope.
+    Broadcast {
+        /// Whether to include coupled vehicles.
+        across_couplings: bool,
+        /// Whether to include the sending script.
+        include_self: bool,
+    },
+    /// Send to a specific coupling.
+    AcrossCoupling {
+        /// The coupling to send to.
+        coupling: Coupling,
+        /// Whether to cascade the message to the next coupling.
+        cascade: bool,
+    },
     /// The parent script.
     Parent,
+}
+
+impl MessageTarget {
+    /// Helper to create a broadcast target that excludes self
+    pub fn broadcast_except_self(across_couplings: bool) -> Self {
+        Self::Broadcast {
+            across_couplings,
+            include_self: false,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Coupling {
+    /// The coupling to the front vehicle.
+    Front,
+    /// The coupling to the rear vehicle.
+    Rear,
+}
+
+impl Coupling {
+    /// Opens the given bus.
+    pub fn open_bus(&self, _bus: &str) {
+        todo!()
+    }
+
+    /// Closes the given bus.
+    pub fn close_bus(&self, _bus: &str) {
+        todo!()
+    }
+
+    /// Returns `true` if the given bus is open.
+    pub fn is_open(&self, _bus: &str) -> bool {
+        todo!()
+    }
 }
 
 #[cfg(test)]
@@ -140,16 +237,12 @@ mod tests {
         value: i32,
     }
 
-    impl MessageType for TestMessage {
-        fn id() -> &'static str {
-            "test_message"
-        }
-    }
+    message_type!(TestMessage, "test", "message", "ibis");
 
     #[test]
     fn test_message() {
         let message = Message::new(TestMessage { value: 42 });
-        assert_eq!(message.id(), "test_message");
+        assert_eq!(message.meta(), &TestMessage::MESSAGE_META);
 
         let value = message.value::<TestMessage>().unwrap();
 

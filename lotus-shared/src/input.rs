@@ -44,7 +44,7 @@ impl ActionStateKind {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ActionState {
     pub kind: ActionStateKind,
-    pub cockpit_index: Option<usize>,
+    pub cockpit_index: Option<u8>,
 }
 
 macro_rules! key_code_struct {
