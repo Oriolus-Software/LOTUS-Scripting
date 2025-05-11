@@ -65,6 +65,7 @@ pub trait MessageType: Serialize + DeserializeOwned {
     const MESSAGE_META: MessageMeta;
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! message_type {
     ($type:ty, $namespace:expr, $identifier:expr, $bus:expr) => {
@@ -80,6 +81,9 @@ macro_rules! message_type {
         }
     };
 }
+
+#[doc(inline)]
+pub use message_type;
 
 #[derive(Debug, thiserror::Error)]
 pub enum MessageValueError {
