@@ -22,9 +22,10 @@ pub mod settings;
 pub mod time;
 pub mod var;
 pub mod prelude {
-    pub use crate::action;
-    pub use crate::log;
-    pub use crate::message::{Message, MessageType};
+    pub use crate::{
+        action, log,
+        message::{Message, MessageType},
+    };
 }
 
 pub trait Script {

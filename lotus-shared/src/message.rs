@@ -9,24 +9,18 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 /// # Example
 /// ```no_run
 /// # use serde::{Deserialize, Serialize};
-/// # use lotus_script::prelude::*;
 /// # use lotus_shared::message::{Message, MessageType};
+/// # use lotus_shared::message_type;
+///
+/// // Define a message type, has to implement Serialize and Deserialize
 /// #[derive(Serialize, Deserialize)]
 /// struct TestMessage {
 ///     value: i32,
 /// }
 ///
-/// impl MessageType for TestMessage {
-///     const MESSAGE_META: MessageMeta = MessageMeta::new("test", "message");
-/// }
-///
-/// fn handle(message: &Message) {
-///     message.handle::<TestMessage>(|m| {
-///        log::info!("Received message: {}", m.value);
-///        Ok(())
-///     }).expect("message handle failed");
-/// }
-/// # handle(&Message::new(TestMessage { value: 42 }));
+/// // Register the message type
+/// message_type!(TestMessage, "test", "message");
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Message {
     meta: MessageMeta,
@@ -74,13 +68,15 @@ pub trait MessageType: Serialize + DeserializeOwned {
 #[macro_export]
 macro_rules! message_type {
     ($type:ty, $namespace:expr, $identifier:expr, $bus:expr) => {
-        impl MessageType for $type {
-            const MESSAGE_META: MessageMeta = MessageMeta::new($namespace, $identifier, Some($bus));
+        impl $crate::message::MessageType for $type {
+            const MESSAGE_META: $crate::message::MessageMeta =
+                $crate::message::MessageMeta::new($namespace, $identifier, Some($bus));
         }
     };
     ($type:ty, $namespace:expr, $identifier:expr) => {
-        impl MessageType for $type {
-            const MESSAGE_META: MessageMeta = MessageMeta::new($namespace, $identifier, None);
+        impl $crate::message::MessageType for $type {
+            const MESSAGE_META: $crate::message::MessageMeta =
+                $crate::message::MessageMeta::new($namespace, $identifier, None);
         }
     };
 }
@@ -107,7 +103,7 @@ pub enum MessageHandleError {
 
 impl Message {
     /// Creates a new message with the given value.
-    pub fn new<T: MessageType>(value: T) -> Self {
+    pub fn new<T: MessageType>(value: &T) -> Self {
         Self {
             meta: T::MESSAGE_META.clone(),
             value: serde_json::to_value(value).unwrap(),
@@ -151,12 +147,19 @@ impl Message {
 }
 
 /// Sends the message to the given targets.
+///
+/// # Example
+/// ```no_run
+/// # use lotus_script::prelude::*;
+/// # use lotus_shared::message::{Message, MessageTarget, send_message};
+/// // Send a message with only a single target
+/// send_message(&TestMessage { value: 42 }, MessageTarget::Myself);
+/// // Send a message to multiple targets
+/// send_message(&TestMessage { value: 42 }, [MessageTarget::Myself, MessageTarget::ChildByIndex(0)]);
+/// ```
 #[cfg(feature = "ffi")]
-pub fn send_message<T: MessageType + Clone>(
-    message: &T,
-    targets: impl IntoIterator<Item = MessageTarget>,
-) {
-    let message = Message::new(message.clone());
+pub fn send_message<T: MessageType>(message: &T, targets: impl IntoIterator<Item = MessageTarget>) {
+    let message = Message::new(message);
     let this = lotus_script_sys::FfiObject::new(&message);
     let targets = targets.into_iter().collect::<Vec<_>>();
     let targets = lotus_script_sys::FfiObject::new(&targets);
@@ -201,6 +204,25 @@ impl MessageTarget {
     }
 }
 
+pub trait IntoMessageTargets {
+    fn into_message_targets(self) -> impl IntoIterator<Item = MessageTarget>;
+}
+
+impl IntoMessageTargets for MessageTarget {
+    fn into_message_targets(self) -> impl IntoIterator<Item = MessageTarget> {
+        [self]
+    }
+}
+
+impl<T> IntoMessageTargets for T
+where
+    T: IntoIterator<Item = MessageTarget>,
+{
+    fn into_message_targets(self) -> impl IntoIterator<Item = MessageTarget> {
+        self
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Coupling {
     /// The coupling to the front vehicle.
@@ -241,7 +263,7 @@ mod tests {
 
     #[test]
     fn test_message() {
-        let message = Message::new(TestMessage { value: 42 });
+        let message = Message::new(&TestMessage { value: 42 });
         assert_eq!(message.meta(), &TestMessage::MESSAGE_META);
 
         let value = message.value::<TestMessage>().unwrap();
