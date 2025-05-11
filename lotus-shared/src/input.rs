@@ -41,7 +41,7 @@ impl ActionStateKind {
 }
 
 /// The state of an action.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ActionState {
     pub kind: ActionStateKind,
     pub cockpit_index: Option<u8>,
