@@ -84,6 +84,7 @@ impl MessageSource {
         matches!(self.coupling, Some(Coupling::Rear))
     }
 }
+
 #[doc(hidden)]
 #[macro_export]
 macro_rules! message_type {
