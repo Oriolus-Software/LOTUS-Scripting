@@ -10,9 +10,9 @@ resolver = "2"
 [workspace.dependencies]
 anyhow = "1"
 bevy = { version = "0.15", default-features = false }
-cargo_toml = "0.20"
+cargo_toml = "0.22"
 clap = "4"
-dirs = "5"
+dirs = "6"
 image = { version = "0.25.2", default-features = false }
 lotus-bindgen-macros = { version = "0.1", path = "./lotus-bindgen-macros" }
 lotus-script = { version = "0.6", path = "./lotus-script" }
@@ -30,7 +30,7 @@ time = "0.3"
 toml = "0.8.19"
 tracing = "0.1"
 tracing-subscriber = "0.3"
-wasmtime = "27"
+wasmtime = "32"
 
 [profile.dev]
 opt-level = 1
