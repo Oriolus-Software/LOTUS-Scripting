@@ -1,0 +1,21 @@
+{
+  "name": "webdocs",
+  "module": "index.ts",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "wrangler": "^4.14.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "private": true,
+  "scripts": {
+    "start": "bun run server.ts",
+    "build": "bun run build.ts",
+    "deploy": "wrangler deploy"
+  },
+  "type": "module",
+  "dependencies": {
+    "hono": "^4.7.9"
+  }
+}

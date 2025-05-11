@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lotus-script-rs",
+  "main": "server.ts",
+  "compatibility_date": "2025-05-11",
+  "assets": {
+    "directory": "public"
+  },
+  "build": {
+    "command": "bun run build.ts"
+  },
+  "routes": [
+    {
+      "pattern": "script-rs.lotus-simulator.dev",
+      "custom_domain": true
+    }
+  ]
+}
