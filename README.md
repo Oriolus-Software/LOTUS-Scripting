@@ -7,7 +7,8 @@
 
 Public crates for [LOTUS](https://store.steampowered.com/app/370350/LOTUSSimulator/) Scripting.
 
-[![Crate Documentation](https://img.shields.io/badge/Crate_Documentation-docs.rs-blue)](https://docs.rs/lotus-script)
+[![Crate Documentation - public build](https://img.shields.io/badge/Crate_Documentation_public_build-docs.rs-blue)](https://docs.rs/lotus-script)
+[![Crate Documentation - experimental build](https://img.shields.io/badge/Crate_Documentation_experimental_build-docs.rs-blue)](https://script-rs.lotus-simulator.dev/lotus_script/)
 [![General Documentation](https://img.shields.io/badge/General_Documentation-docs.rs-blue)](https://docs.lotus-simulator.de)
 
 # Suggestions / Contributions?

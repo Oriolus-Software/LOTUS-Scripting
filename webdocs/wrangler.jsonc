@@ -7,7 +7,7 @@
     "directory": "public"
   },
   "build": {
-    "command": "bun run build.ts"
+    "command": "bun run build"
   },
   "routes": [
     {
