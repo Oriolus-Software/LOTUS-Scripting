@@ -201,7 +201,7 @@ impl MessageTarget {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Coupling {
     /// The coupling to the front vehicle.
     Front,
