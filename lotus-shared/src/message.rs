@@ -24,6 +24,7 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Message {
     meta: MessageMeta,
+    source: MessageSource,
     value: serde_json::Value,
 }
 
@@ -65,6 +66,24 @@ pub trait MessageType: Serialize + DeserializeOwned {
     const MESSAGE_META: MessageMeta;
 }
 
+/// Represents the source of a message.
+#[derive(Debug, Default, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct MessageSource {
+    /// If the message is coming from another vehicle across couplings, this will be Some.
+    pub coupling: Option<Coupling>,
+}
+
+impl MessageSource {
+    /// Returns `true` if the message is coming from the vehicle in front.
+    pub fn is_front(&self) -> bool {
+        matches!(self.coupling, Some(Coupling::Front))
+    }
+
+    /// Returns `true` if the message is coming from the vehicle in rear.
+    pub fn is_rear(&self) -> bool {
+        matches!(self.coupling, Some(Coupling::Rear))
+    }
+}
 #[doc(hidden)]
 #[macro_export]
 macro_rules! message_type {
@@ -110,6 +129,7 @@ impl Message {
     pub fn new<T: MessageType>(value: &T) -> Self {
         Self {
             meta: T::MESSAGE_META.clone(),
+            source: MessageSource::default(),
             value: serde_json::to_value(value).unwrap(),
         }
     }
@@ -117,6 +137,11 @@ impl Message {
     /// Returns the message type metadata.
     pub fn meta(&self) -> &MessageMeta {
         &self.meta
+    }
+
+    /// Returns the source of the message.
+    pub fn source(&self) -> &MessageSource {
+        &self.source
     }
 
     /// Returns the message value as the given type. Returns a [MessageValueError] if the message has a different type.
@@ -146,6 +171,15 @@ impl Message {
             Ok(v) => f(v).map_err(MessageHandleError::Handler).map(|_| true),
             Err(MessageValueError::InvalidType) => Ok(false),
             Err(MessageValueError::Serialization(e)) => Err(MessageHandleError::Serialization(e)),
+        }
+    }
+
+    #[cfg(feature = "engine")]
+    pub fn with_source(&self, source: MessageSource) -> Self {
+        Self {
+            meta: self.meta.clone(),
+            source,
+            value: self.value.clone(),
         }
     }
 }
