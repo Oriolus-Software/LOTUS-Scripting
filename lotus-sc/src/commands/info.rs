@@ -24,11 +24,12 @@ impl InfoCommand {
 
         let mut linker = wasmtime::Linker::new(&engine);
 
+        let mut store = wasmtime::Store::new(&engine, ());
+
         linker
-            .define_unknown_imports_as_default_values(&module)
+            .define_unknown_imports_as_default_values(&mut store, &module)
             .context("failed to define unknown imports as default values")?;
 
-        let mut store = wasmtime::Store::new(&engine, ());
         let instance = linker
             .instantiate(&mut store, &module)
             .with_context(|| format!("failed to instantiate module '{}'", self.path))?;
