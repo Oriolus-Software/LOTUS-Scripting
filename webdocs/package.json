@@ -10,7 +10,7 @@
   },
   "private": true,
   "scripts": {
-    "start": "bun run server.ts",
+    "dev": "bun run wrangler dev",
     "build": "bun run build.ts",
     "deploy": "wrangler deploy"
   },

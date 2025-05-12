@@ -9,3 +9,5 @@ fs.mkdirSync("public");
 
 const docDir = `target/doc`;
 fs.cpSync(docDir, "public", { recursive: true });
+
+fs.writeFileSync("public/_redirects", "/ /lotus_script/ 302");
