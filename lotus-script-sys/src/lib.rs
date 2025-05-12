@@ -35,6 +35,7 @@ pub mod time {
     extern "C" {
         pub fn delta_f64() -> f64;
         pub fn ticks_alive() -> u64;
+        pub fn game_time() -> i64;
     }
 }
 

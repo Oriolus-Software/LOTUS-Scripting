@@ -4,7 +4,7 @@ use bevy::{
     reflect::Reflect,
 };
 
-#[cfg_attr(feature = "bevy", derive(Resource, Reflect))]
+#[cfg_attr(feature = "bevy", derive(Resource, Reflect, Debug, Clone, Copy))]
 #[cfg_attr(feature = "bevy", reflect(Resource))]
 pub struct GameTime {
     #[cfg(feature = "engine")]
@@ -75,6 +75,13 @@ mod _time {
                 self.time_unix_micros / 1_000_000,
                 (self.time_unix_micros % 1_000_000 * 1_000) as i32,
             )
+        }
+
+        pub fn from_unix_micros(unix_micros: i64) -> Self {
+            Self {
+                speed_multiplier: 1.0,
+                time_unix_micros: unix_micros,
+            }
         }
     }
 }
