@@ -4,8 +4,8 @@ use lotus_shared::content::ContentId;
 pub trait VariableType {
     type Output;
 
-    fn get(name: &str) -> Self::Output;
-    fn set(&self, name: &str);
+    fn get_var(name: &str) -> Self::Output;
+    fn set_var(var: &Self, name: &str);
 }
 
 pub enum Persistence {
@@ -18,14 +18,14 @@ macro_rules! impl_variable_type {
         impl VariableType for $type {
             type Output = $type;
 
-            fn get(name: &str) -> Self::Output {
+            fn get_var(name: &str) -> Self::Output {
                 let name = FfiObject::new(&name);
                 unsafe { lotus_script_sys::var::$get(name.packed()) as _ }
             }
 
-            fn set(&self, name: &str) {
+            fn set_var(var: &Self, name: &str) {
                 let name = FfiObject::new(&name);
-                unsafe { lotus_script_sys::var::$set(name.packed(), *self as _) }
+                unsafe { lotus_script_sys::var::$set(name.packed(), *var as _) }
             }
         }
     };
@@ -47,17 +47,17 @@ impl_variable_type!(f64, get_f64, set_f64);
 impl VariableType for bool {
     type Output = bool;
 
-    fn get(name: &str) -> Self::Output {
+    fn get_var(name: &str) -> Self::Output {
         let name = FfiObject::new(&name);
         unsafe { lotus_script_sys::var::get_bool(name.packed()) != 0 }
     }
 
-    fn set(&self, name: &str) {
+    fn set_var(var: &Self, name: &str) {
         let name = FfiObject::new(&name);
         unsafe {
             lotus_script_sys::var::set_bool(
                 name.packed(),
-                match self {
+                match var {
                     true => 1,
                     false => 0,
                 },
@@ -69,15 +69,15 @@ impl VariableType for bool {
 impl VariableType for String {
     type Output = String;
 
-    fn get(name: &str) -> Self::Output {
+    fn get_var(name: &str) -> Self::Output {
         let name = FfiObject::new(&name);
         let ptr = unsafe { lotus_script_sys::var::get_string(name.packed()) };
         String::from_ffi(ptr)
     }
 
-    fn set(&self, name: &str) {
+    fn set_var(var: &Self, name: &str) {
         let name = FfiObject::new(&name);
-        let value = FfiObject::new(self);
+        let value = FfiObject::new(&var);
         unsafe { lotus_script_sys::var::set_string(name.packed(), value.packed()) }
     }
 }
@@ -85,15 +85,15 @@ impl VariableType for String {
 impl VariableType for &str {
     type Output = String;
 
-    fn get(name: &str) -> Self::Output {
+    fn get_var(name: &str) -> Self::Output {
         let name = FfiObject::new(&name);
         let ptr = unsafe { lotus_script_sys::var::get_string(name.packed()) };
         String::from_ffi(ptr)
     }
 
-    fn set(&self, name: &str) {
+    fn set_var(var: &Self, name: &str) {
         let name = FfiObject::new(&name);
-        let value = FfiObject::new(&self.to_string());
+        let value = FfiObject::new(&var.to_string());
         unsafe { lotus_script_sys::var::set_string(name.packed(), value.packed()) }
     }
 }
@@ -101,15 +101,15 @@ impl VariableType for &str {
 impl VariableType for ContentId {
     type Output = ContentId;
 
-    fn get(name: &str) -> Self {
+    fn get_var(name: &str) -> Self {
         let name = FfiObject::new(&name);
         let ptr = unsafe { lotus_script_sys::var::get_content_id(name.packed()) };
         FfiObject::from_packed(ptr).deserialize()
     }
 
-    fn set(&self, name: &str) {
+    fn set_var(var: &Self, name: &str) {
         let name = FfiObject::new(&name);
-        let value = FfiObject::new(self);
+        let value = FfiObject::new(var);
         unsafe { lotus_script_sys::var::set_content_id(name.packed(), value.packed()) }
     }
 }
@@ -130,10 +130,18 @@ impl<T> Variable<T> {
 
 impl<T: VariableType> Variable<T> {
     pub fn get(&self) -> T::Output {
-        T::get(&self.name)
+        T::get_var(&self.name)
     }
 
     pub fn set(&self, value: &T) {
-        value.set(&self.name);
+        T::set_var(value, &self.name);
     }
+}
+
+pub fn get_var<T: VariableType>(name: &str) -> T::Output {
+    T::get_var(name)
+}
+
+pub fn set_var<T: VariableType>(var: &T, name: &str) {
+    T::set_var(var, name);
 }

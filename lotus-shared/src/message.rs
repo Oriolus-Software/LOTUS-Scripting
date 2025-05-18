@@ -185,22 +185,48 @@ impl Message {
     }
 }
 
+pub trait IntoMessageTargets {
+    fn into_message_targets(self) -> impl IntoIterator<Item = MessageTarget>;
+}
+
+impl IntoMessageTargets for MessageTarget {
+    fn into_message_targets(self) -> impl IntoIterator<Item = MessageTarget> {
+        [self]
+    }
+}
+
+impl<T> IntoMessageTargets for T
+where
+    T: IntoIterator<Item = MessageTarget>,
+{
+    fn into_message_targets(self) -> impl IntoIterator<Item = MessageTarget> {
+        self
+    }
+}
+
 /// Sends the message to the given targets.
 ///
 /// # Example
 /// ```no_run
-/// # use lotus_script::prelude::*;
 /// # use lotus_shared::message::{Message, MessageTarget, send_message};
+/// # use serde::{Deserialize, Serialize};
+/// # use lotus_shared::message_type;
+/// # #[derive(Serialize, Deserialize)]
+/// # struct TestMessage { value: i32 };
+/// # message_type!(TestMessage, "test", "message");
 /// // Send a message with only a single target
 /// send_message(&TestMessage { value: 42 }, MessageTarget::Myself);
 /// // Send a message to multiple targets
 /// send_message(&TestMessage { value: 42 }, [MessageTarget::Myself, MessageTarget::ChildByIndex(0)]);
 /// ```
 #[cfg(feature = "ffi")]
-pub fn send_message<T: MessageType>(message: &T, targets: impl IntoIterator<Item = MessageTarget>) {
+pub fn send_message<T: MessageType>(message: &T, targets: impl IntoMessageTargets) {
     let message = Message::new(message);
     let this = lotus_script_sys::FfiObject::new(&message);
-    let targets = targets.into_iter().collect::<Vec<_>>();
+    let targets = targets
+        .into_message_targets()
+        .into_iter()
+        .collect::<Vec<_>>();
     let targets = lotus_script_sys::FfiObject::new(&targets);
 
     unsafe { lotus_script_sys::messages::send(targets.packed(), this.packed()) }
@@ -247,25 +273,6 @@ impl MessageTarget {
             across_couplings: true,
             include_self: true,
         }
-    }
-}
-
-pub trait IntoMessageTargets {
-    fn into_message_targets(self) -> impl IntoIterator<Item = MessageTarget>;
-}
-
-impl IntoMessageTargets for MessageTarget {
-    fn into_message_targets(self) -> impl IntoIterator<Item = MessageTarget> {
-        [self]
-    }
-}
-
-impl<T> IntoMessageTargets for T
-where
-    T: IntoIterator<Item = MessageTarget>,
-{
-    fn into_message_targets(self) -> impl IntoIterator<Item = MessageTarget> {
-        self
     }
 }
 

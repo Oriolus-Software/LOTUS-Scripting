@@ -21,11 +21,11 @@ where
     }
 
     pub fn get(&self) -> T::Output {
-        T::get(self.name)
+        T::get_var(self.name)
     }
 
     pub fn set(&self, value: T) {
-        value.set(self.name)
+        crate::var::set_var(&value, self.name)
     }
 }
 

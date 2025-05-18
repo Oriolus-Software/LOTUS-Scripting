@@ -25,6 +25,7 @@ pub mod prelude {
     pub use crate::{
         action, log,
         message::{message_type, Message, MessageType},
+        var::{get_var, set_var},
     };
 }
 
