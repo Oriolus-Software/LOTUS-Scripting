@@ -241,6 +241,13 @@ impl MessageTarget {
             include_self: false,
         }
     }
+
+    pub fn broadcast_all() -> Self {
+        Self::Broadcast {
+            across_couplings: true,
+            include_self: true,
+        }
+    }
 }
 
 pub trait IntoMessageTargets {
