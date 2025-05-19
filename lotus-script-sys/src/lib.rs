@@ -130,6 +130,8 @@ pub mod vehicle {
     #[link(wasm_import_module = "vehicle")]
     extern "C" {
         pub fn is_coupled(coupling: u32) -> u32;
+        pub fn rail_quality(bogie: u64, axle: u64) -> u64;
+        pub fn surface_type(bogie: u64, axle: u64) -> u64;
     }
 }
 
