@@ -3,7 +3,6 @@ pub use lotus_bindgen_macros::lotus_bindgen;
 use message::Message;
 
 pub mod action;
-pub mod assets;
 pub mod content;
 #[doc(hidden)]
 pub mod event;
