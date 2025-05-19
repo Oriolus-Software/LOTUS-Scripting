@@ -13,6 +13,36 @@ pub struct RegisterAction {
     pub default_key: KeyCode,
 }
 
+impl RegisterAction {
+    pub fn new(id: String, default_key: KeyCode) -> Self {
+        Self { id, default_key }
+    }
+}
+
+impl<T: Into<String>> From<(T, KeyCode)> for RegisterAction {
+    fn from((id, default_key): (T, KeyCode)) -> Self {
+        Self::new(id.into(), default_key)
+    }
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct ActionsBuilder(Vec<RegisterAction>);
+
+impl ActionsBuilder {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn push(mut self, id: impl Into<String>, default_key: KeyCode) -> Self {
+        self.0.push(RegisterAction::new(id.into(), default_key));
+        self
+    }
+
+    pub fn build(self) -> Vec<RegisterAction> {
+        self.0
+    }
+}
+
 /// Describes an event that is sent when an action is triggered.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ActionEvent {
