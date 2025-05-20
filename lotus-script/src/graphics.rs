@@ -52,17 +52,8 @@ pub mod textures {
             packed.into()
         }
 
-        /// For better performance, use [`Self::set_pixels`] instead with all the pixels you want to set.
-        /// This is only here for convenience.
-        pub fn set_pixel<P>(&mut self, draw_pixel: P)
-        where
-            P: Into<DrawPixel> + Copy,
-        {
-            self.set_pixels(&[draw_pixel]);
-        }
-
-        /// Set multiple pixels on the texture.
-        pub fn set_pixels<P>(&mut self, pixels: &[P])
+        /// Draw multiple pixels on the texture.
+        pub fn draw_pixels<P>(&mut self, pixels: &[P])
         where
             P: Into<DrawPixel> + Copy,
         {
