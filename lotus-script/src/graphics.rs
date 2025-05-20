@@ -115,11 +115,19 @@ pub mod textures {
         pub fn handle(&self) -> TextureHandle {
             self.0
         }
+
+        /// Forget the texture. This means it will not be disposed when the texture is dropped.
+        /// Use this only if you want to keep the texture alive without keeping a reference to it.
+        pub fn forget(mut self) {
+            self.0 = TextureHandle::new(u32::MAX);
+        }
     }
 
     impl Drop for Texture {
         fn drop(&mut self) {
-            unsafe { lotus_script_sys::textures::dispose(self.0.id()) }
+            if self.0.id() != u32::MAX {
+                unsafe { lotus_script_sys::textures::dispose(self.0.id()) }
+            }
         }
     }
 
