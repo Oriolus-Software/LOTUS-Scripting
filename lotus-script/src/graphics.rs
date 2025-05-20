@@ -2,7 +2,7 @@ pub use lotus_shared::graphics::*;
 
 pub mod textures {
     use lotus_script_sys::FfiObject;
-    use lotus_shared::{graphics::Color, math::UVec2};
+    use lotus_shared::{content::ContentId, graphics::Color, math::UVec2};
 
     pub use lotus_shared::graphics::textures::*;
 
@@ -92,6 +92,34 @@ pub mod textures {
             unsafe { lotus_script_sys::textures::flush_actions(self.0.id()) == 1 }
         }
 
+        /// Draws another texture on top of this one.
+        pub fn draw_script_texture(&mut self, other: &Texture, options: DrawTextureOpts) {
+            self.add_action(TextureAction::DrawScriptTexture {
+                handle: other.handle(),
+                options,
+            });
+        }
+
+        /// Draws a text on the texture.
+        pub fn draw_text(
+            &mut self,
+            font: ContentId,
+            text: impl Into<String>,
+            top_left: impl Into<UVec2>,
+            letter_spacing: u32,
+            full_color: impl Into<Option<Color>>,
+            alpha_mode: AlphaMode,
+        ) {
+            self.add_action(TextureAction::DrawText {
+                font,
+                text: text.into(),
+                top_left: top_left.into(),
+                letter_spacing,
+                full_color: full_color.into(),
+                alpha_mode,
+            });
+        }
+
         /// Get the handle of the texture.
         pub fn handle(&self) -> TextureHandle {
             self.0
@@ -109,12 +137,6 @@ pub mod textures {
         // Content(ContentId),
         Script(TextureHandle),
     }
-
-    // impl From<ContentId> for DrawableTexture {
-    //     fn from(content: ContentId) -> Self {
-    //         Self::Content(content)
-    //     }
-    // }
 
     impl From<&Texture> for DrawableTexture {
         fn from(texture: &Texture) -> Self {
