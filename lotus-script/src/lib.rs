@@ -23,8 +23,11 @@ pub mod time;
 pub mod var;
 pub mod prelude {
     pub use crate::{
-        action, log,
-        message::{message_type, Message, MessageType},
+        action,
+        graphics::{textures::Texture, Color},
+        log,
+        message::{message_type, send_message, Message, MessageTarget, MessageType},
+        rand, time,
         var::{get_var, set_var},
     };
 }
