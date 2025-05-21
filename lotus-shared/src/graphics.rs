@@ -119,6 +119,16 @@ pub mod textures {
         pub data: Option<Cow<'a, [u8]>>,
     }
 
+    impl From<(u32, u32)> for TextureCreationOptions<'_> {
+        fn from((width, height): (u32, u32)) -> Self {
+            Self {
+                width,
+                height,
+                data: None,
+            }
+        }
+    }
+
     /// A handle to a texture.
     #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
     #[serde(transparent)]

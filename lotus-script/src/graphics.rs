@@ -13,7 +13,8 @@ pub mod textures {
     impl Texture {
         /// Create a new texture.
         #[must_use]
-        pub fn create(options: TextureCreationOptions) -> Self {
+        pub fn create<'a>(options: impl Into<TextureCreationOptions<'a>>) -> Self {
+            let options = options.into();
             let options = FfiObject::new(&options);
 
             unsafe {
