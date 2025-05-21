@@ -46,7 +46,7 @@ pub mod textures {
             self.add_action(TextureAction::Clear(color));
         }
 
-        /// Get the color of a pixel on the texture.
+        /// Read the color of a pixel on the texture.
         #[inline]
         pub fn read_pixel(&self, x: u32, y: u32) -> Color {
             let packed = unsafe { lotus_script_sys::textures::get_pixel(self.0.id(), x, y) };

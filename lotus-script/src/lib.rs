@@ -11,6 +11,7 @@ pub mod gizmos;
 pub mod graphics;
 pub mod input;
 pub mod log;
+#[doc(hidden)]
 pub mod macros;
 pub mod math;
 pub mod message;
