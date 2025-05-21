@@ -1,5 +1,28 @@
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
+#[derive(Debug, thiserror::Error)]
+pub enum VehicleError {
+    #[error("vehicle not found")]
+    VehicleNotFound = 256,
+    #[error("bogie not found")]
+    BogieNotFound = 512,
+    #[error("axle not found")]
+    AxleNotFound = 1024,
+    #[error("unknown error")]
+    Unknown = 0,
+}
+
+impl From<u32> for VehicleError {
+    fn from(value: u32) -> Self {
+        match value {
+            256 => VehicleError::VehicleNotFound,
+            512 => VehicleError::BogieNotFound,
+            1024 => VehicleError::AxleNotFound,
+            _ => VehicleError::Unknown,
+        }
+    }
+}
+
 /// Provides the quality of the rails under the given axis.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
@@ -14,10 +37,19 @@ pub enum RailQuality {
     RoughDirt = 7,
 }
 
-impl TryFrom<u8> for RailQuality {
-    type Error = ();
+impl RailQuality {
+    #[cfg(feature = "ffi")]
+    /// Provides the quality of the rails under the given axis.
+    pub fn get(bogie: u8, axle: u8) -> Result<RailQuality, VehicleError> {
+        let quality = unsafe { lotus_script_sys::vehicle::rail_quality(bogie as u32, axle as u32) };
+        RailQuality::try_from(quality)
+    }
+}
 
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
+impl TryFrom<u32> for RailQuality {
+    type Error = VehicleError;
+
+    fn try_from(value: u32) -> Result<Self, Self::Error> {
         match value {
             0 => Ok(RailQuality::Smooth),
             1 => Ok(RailQuality::Rough),
@@ -27,7 +59,7 @@ impl TryFrom<u8> for RailQuality {
             5 => Ok(RailQuality::HighSpeedSmooth),
             6 => Ok(RailQuality::SmoothDirt),
             7 => Ok(RailQuality::RoughDirt),
-            _ => Err(()),
+            value => Err(value.into()),
         }
     }
 }
@@ -41,15 +73,24 @@ pub enum SurfaceType {
     Grass = 2,
 }
 
-impl TryFrom<u8> for SurfaceType {
-    type Error = ();
+impl SurfaceType {
+    #[cfg(feature = "ffi")]
+    /// Provides the type of the surface under the given axis.
+    pub fn get(bogie: u8, axle: u8) -> Result<SurfaceType, VehicleError> {
+        let surface_type =
+            unsafe { lotus_script_sys::vehicle::surface_type(bogie as u32, axle as u32) };
+        SurfaceType::try_from(surface_type)
+    }
+}
+impl TryFrom<u32> for SurfaceType {
+    type Error = VehicleError;
 
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
+    fn try_from(value: u32) -> Result<Self, Self::Error> {
         match value {
             0 => Ok(SurfaceType::Gravel),
             1 => Ok(SurfaceType::Street),
             2 => Ok(SurfaceType::Grass),
-            _ => Err(()),
+            value => Err(value.into()),
         }
     }
 }
