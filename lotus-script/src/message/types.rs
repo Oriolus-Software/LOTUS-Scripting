@@ -1,7 +1,5 @@
-use lotus_shared::message::MessageMeta;
+use lotus_shared::message::message_type;
 use serde::{Deserialize, Serialize};
-
-use super::MessageType;
 
 /// Represents an event triggered by a sensor in the system.
 ///
@@ -29,9 +27,7 @@ impl TriggerEvent {
     }
 }
 
-impl MessageType for TriggerEvent {
-    const MESSAGE_META: MessageMeta = MessageMeta::new("builtin", "trigger_event", None);
-}
+message_type!(TriggerEvent, "builtin", "trigger_event");
 
 /// Represents the type of trigger event that occurred.
 #[derive(Debug, Serialize, Deserialize)]
@@ -68,9 +64,7 @@ pub struct ButtonEvent {
     pub cockpit_index: u8,
 }
 
-impl MessageType for ButtonEvent {
-    const MESSAGE_META: MessageMeta = MessageMeta::new("builtin", "button_event", None);
-}
+message_type!(ButtonEvent, "builtin", "button_event");
 
 /// Represents the state of the battery switch.
 ///
@@ -79,6 +73,4 @@ impl MessageType for ButtonEvent {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BatterySwitch(pub bool);
 
-impl MessageType for BatterySwitch {
-    const MESSAGE_META: MessageMeta = MessageMeta::new("builtin", "battery_switch", None);
-}
+message_type!(BatterySwitch, "builtin", "battery_switch");
