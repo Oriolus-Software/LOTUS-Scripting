@@ -27,8 +27,9 @@ pub mod prelude {
         graphics::{textures::Texture, Color},
         log,
         message::{message_type, send_message, Message, MessageTarget, MessageType},
-        rand, time,
+        rand, script, time,
         var::{get_var, set_var},
+        Script,
     };
 }
 
