@@ -25,7 +25,7 @@ where
     }
 
     pub fn set(&self, value: T) {
-        crate::var::set_var(self.name, &value)
+        crate::var::set_var(self.name, value)
     }
 }
 
