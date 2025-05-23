@@ -299,6 +299,14 @@ impl Coupling {
     pub fn is_open(&self, _bus: &str) -> bool {
         todo!()
     }
+
+    #[cfg(feature = "ffi")]
+    pub fn is_coupled(&self) -> bool {
+        match self {
+            Self::Front => unsafe { lotus_script_sys::vehicle::is_coupled(0) == 1 },
+            Self::Rear => unsafe { lotus_script_sys::vehicle::is_coupled(1) == 1 },
+        }
+    }
 }
 
 #[cfg(test)]

@@ -126,6 +126,13 @@ pub mod font {
     }
 }
 
+pub mod vehicle {
+    #[link(wasm_import_module = "vehicle")]
+    extern "C" {
+        pub fn is_coupled(coupling: u32) -> u32;
+    }
+}
+
 pub trait FromFfi {
     type FfiType;
     fn from_ffi(ffi: Self::FfiType) -> Self;
