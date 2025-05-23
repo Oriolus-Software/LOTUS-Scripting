@@ -80,6 +80,7 @@ mod _time {
         pub fn from_unix_micros(unix_micros: i64) -> Self {
             Self {
                 speed_multiplier: 1.0,
+                #[cfg(feature = "engine")]
                 time_unix_micros: unix_micros,
             }
         }
