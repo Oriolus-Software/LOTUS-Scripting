@@ -7,3 +7,4 @@ pub mod input;
 pub mod math;
 pub mod message;
 pub mod time;
+pub mod vehicle;

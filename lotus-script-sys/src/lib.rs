@@ -130,6 +130,16 @@ pub mod vehicle {
     #[link(wasm_import_module = "vehicle")]
     extern "C" {
         pub fn is_coupled(coupling: u32) -> u32;
+        pub fn rail_quality(bogie: u32, axle: u32) -> u32;
+        pub fn surface_type(bogie: u32, axle: u32) -> u32;
+        pub fn inverse_radius(bogie: u32, axle: u32) -> f32;
+        pub fn velocity_vs_ground() -> f32;
+        pub fn acceleration_vs_ground() -> f32;
+        pub fn pantograph_height(pantograph: u32) -> f32;
+        pub fn pantograph_voltage(pantograph: u32) -> f32;
+        pub fn traction_force_newton(bogie: u32, axle: u32, value: f32);
+        pub fn brake_force_newton(bogie: u32, axle: u32, value: f32);
+        pub fn rail_brake_force_newton(bogie: u32, value: f32);
     }
 }
 

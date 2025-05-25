@@ -21,6 +21,7 @@ pub mod rand;
 pub mod settings;
 pub mod time;
 pub mod var;
+pub mod vehicle;
 pub mod prelude {
     pub use crate::{
         action,
