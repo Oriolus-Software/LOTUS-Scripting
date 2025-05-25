@@ -129,6 +129,8 @@ pub mod font {
 pub mod vehicle {
     #[link(wasm_import_module = "vehicle")]
     extern "C" {
+        pub fn bogie_is_valid(bogie: u32) -> u32;
+        pub fn axle_is_valid(bogie: u32, axle: u32) -> u32;
         pub fn is_coupled(coupling: u32) -> u32;
         pub fn rail_quality(bogie: u32, axle: u32) -> u32;
         pub fn surface_type(bogie: u32, axle: u32) -> u32;
