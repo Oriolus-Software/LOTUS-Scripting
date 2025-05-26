@@ -139,9 +139,9 @@ pub mod vehicle {
         pub fn acceleration_vs_ground() -> f32;
         pub fn pantograph_height(pantograph: u32) -> f32;
         pub fn pantograph_voltage(pantograph: u32) -> f32;
-        pub fn traction_force_newton(bogie: u32, axle: u32, value: f32);
-        pub fn brake_force_newton(bogie: u32, axle: u32, value: f32);
-        pub fn rail_brake_force_newton(bogie: u32, value: f32);
+        pub fn set_traction_force_newton(bogie: u32, axle: u32, value: f32);
+        pub fn set_brake_force_newton(bogie: u32, axle: u32, value: f32);
+        pub fn set_rail_brake_force_newton(bogie: u32, value: f32);
     }
 }
 
