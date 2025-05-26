@@ -8,8 +8,10 @@ pub enum VehicleError {
     BogieNotFound = 512,
     #[error("axle not found")]
     AxleNotFound = 1024,
+    #[error("coupling not found")]
+    CouplingNotFound = 2048,
     #[error("pantograph not found")]
-    PantographNotFound = 2048,
+    PantographNotFound = 4096,
     #[error("unknown error")]
     Unknown = 0,
 }
@@ -142,6 +144,47 @@ impl Axle {
                 value,
             )
         };
+    }
+}
+
+#[cfg(feature = "ffi")]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct Pantograph {
+    index: usize,
+}
+
+#[cfg(feature = "ffi")]
+impl Pantograph {
+    pub fn get(index: usize) -> Result<Self, VehicleError> {
+        match unsafe { lotus_script_sys::vehicle::pantograph_is_valid(index as u32) } {
+            0 => Ok(Self { index }),
+            e => Err(e.into()),
+        }
+    }
+
+    /// Returns the height of the lowest contact wire above the pantograph position.
+    pub fn height(self) -> Result<f32, VehicleError> {
+        let height = unsafe { lotus_script_sys::vehicle::pantograph_height(self.index as u32) };
+        if height.is_nan() {
+            Err(VehicleError::VehicleNotFound)
+        } else if height == f32::INFINITY {
+            Err(VehicleError::PantographNotFound)
+        } else {
+            Ok(height)
+        }
+    }
+
+    /// The voltage of the contact wire above the pantograph. The value is normalized, i.e. 1.0 means that the target voltage is present.
+    /// However, the script itself must check whether the pantograph is touching the contact wire.
+    pub fn voltage(self) -> Result<f32, VehicleError> {
+        let voltage = unsafe { lotus_script_sys::vehicle::pantograph_voltage(self.index as u32) };
+        if voltage.is_nan() {
+            Err(VehicleError::VehicleNotFound)
+        } else if voltage == f32::INFINITY {
+            Err(VehicleError::PantographNotFound)
+        } else {
+            Ok(voltage)
+        }
     }
 }
 

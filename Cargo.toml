@@ -9,7 +9,7 @@ resolver = "2"
 
 [workspace.dependencies]
 anyhow = "1"
-bevy = { version = "0.15", default-features = false }
+bevy = { version = "0.16", default-features = false }
 cargo_toml = "0.22"
 clap = "4"
 dirs = "6"

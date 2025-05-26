@@ -131,6 +131,7 @@ pub mod vehicle {
     extern "C" {
         pub fn bogie_is_valid(bogie: u32) -> u32;
         pub fn axle_is_valid(bogie: u32, axle: u32) -> u32;
+        pub fn pantograph_is_valid(end: u32) -> u32;
         pub fn is_coupled(coupling: u32) -> u32;
         pub fn rail_quality(bogie: u32, axle: u32) -> u32;
         pub fn surface_type(bogie: u32, axle: u32) -> u32;

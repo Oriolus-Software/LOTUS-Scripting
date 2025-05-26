@@ -92,7 +92,7 @@ impl Default for GameTime {
     fn default() -> Self {
         Self {
             speed_multiplier: 1.0,
-            time_unix_micros: 1732283105383311,
+            time_unix_micros: 1_746_957_625_000_000,
         }
     }
 }
