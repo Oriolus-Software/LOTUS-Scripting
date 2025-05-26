@@ -27,7 +27,7 @@ impl From<u32> for VehicleError {
 }
 
 #[cfg(feature = "ffi")]
-#[derive(Copy, Clone)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct Bogie {
     index: usize,
 }
@@ -53,7 +53,7 @@ impl Bogie {
 }
 
 #[cfg(feature = "ffi")]
-#[derive(Copy, Clone)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct Axle {
     bogie_index: usize,
     axle_index: usize,
@@ -146,7 +146,7 @@ impl Axle {
 }
 
 /// Provides the quality of the rails under the given axis.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum RailQuality {
     Smooth = 0,
@@ -178,7 +178,7 @@ impl TryFrom<u32> for RailQuality {
 }
 
 /// Type of the surface under the given axis.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum SurfaceType {
     Gravel = 0,
