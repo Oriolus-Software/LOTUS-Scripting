@@ -163,28 +163,20 @@ impl Pantograph {
     }
 
     /// Returns the height of the lowest contact wire above the pantograph position.
-    pub fn height(self) -> Result<f32, VehicleError> {
+    pub fn height(self) -> f32 {
         let height = unsafe { lotus_script_sys::vehicle::pantograph_height(self.index as u32) };
-        if height.is_nan() {
-            Err(VehicleError::VehicleNotFound)
-        } else if height == f32::INFINITY {
-            Err(VehicleError::PantographNotFound)
-        } else {
-            Ok(height)
-        }
+        assert!(!height.is_nan());
+        assert_ne!(height, f32::INFINITY);
+        height
     }
 
     /// The voltage of the contact wire above the pantograph. The value is normalized, i.e. 1.0 means that the target voltage is present.
     /// However, the script itself must check whether the pantograph is touching the contact wire.
-    pub fn voltage(self) -> Result<f32, VehicleError> {
+    pub fn voltage(self) -> f32 {
         let voltage = unsafe { lotus_script_sys::vehicle::pantograph_voltage(self.index as u32) };
-        if voltage.is_nan() {
-            Err(VehicleError::VehicleNotFound)
-        } else if voltage == f32::INFINITY {
-            Err(VehicleError::PantographNotFound)
-        } else {
-            Ok(voltage)
-        }
+        assert!(!voltage.is_nan());
+        assert_ne!(voltage, f32::INFINITY);
+        voltage
     }
 }
 
