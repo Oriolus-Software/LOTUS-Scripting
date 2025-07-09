@@ -117,6 +117,8 @@ pub mod textures {
         pub height: u32,
         /// The data of the texture. This is currently a placeholder for future use.
         pub data: Option<Cow<'a, [u8]>>,
+        /// Whether to generate mipmaps for the texture.
+        pub mipmaps: bool,
     }
 
     impl From<(u32, u32)> for TextureCreationOptions<'_> {
@@ -125,6 +127,7 @@ pub mod textures {
                 width,
                 height,
                 data: None,
+                mipmaps: false,
             }
         }
     }
