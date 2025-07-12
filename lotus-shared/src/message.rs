@@ -277,6 +277,7 @@ impl MessageTarget {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum Coupling {
     /// The coupling to the front vehicle.
     Front,

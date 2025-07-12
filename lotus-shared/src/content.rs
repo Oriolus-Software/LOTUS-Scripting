@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// A unique identifier for a content item.
-#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize, Default)]
 pub struct ContentId {
     /// The user ID of the content item.
     pub user_id: i32,

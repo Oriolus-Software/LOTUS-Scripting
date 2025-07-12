@@ -9,6 +9,7 @@ license = "MIT/Apache-2.0"
 
 [features]
 time = ["lotus-shared/time"]
+internal = ["lotus-shared/internal"]
 
 [dependencies]
 lotus-bindgen-macros = { workspace = true }

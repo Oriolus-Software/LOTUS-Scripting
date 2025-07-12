@@ -1,3 +1,6 @@
+#[cfg(feature = "internal")]
+use lotus_script_sys::FfiObject;
+
 pub use lotus_shared::graphics::*;
 
 pub mod textures {
@@ -149,4 +152,10 @@ pub mod textures {
             Self::Script(handle)
         }
     }
+}
+
+#[cfg(feature = "internal")]
+pub fn fetch_drawable_texture_properties() -> Vec<DrawableTextureProperties> {
+    let properties = unsafe { lotus_script_sys::textures::fetch_drawable_texture_properties() };
+    FfiObject::from_packed(properties).deserialize()
 }

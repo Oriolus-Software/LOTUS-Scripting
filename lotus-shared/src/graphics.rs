@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::content::ContentId;
+
 /// A color in the RGBA format.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Color {
@@ -234,4 +236,39 @@ pub mod textures {
             }
         }
     }
+}
+
+#[cfg(feature = "internal")]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DrawableTextureProperties {
+    pub width: u32,
+    pub height: u32,
+    pub texture_variable_id: String,
+    pub font: ContentId,
+    pub text_variable_id: String,
+    pub set_color: bool,
+    pub color: Color,
+    pub horizontal_alignment: TextHorizontalAlignment,
+    pub vertical_alignment: TextVerticalAlignment,
+    pub alignment_resolution: u8,
+}
+
+#[cfg(feature = "internal")]
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
+pub enum TextHorizontalAlignment {
+    #[default]
+    Center,
+    Left,
+    Right,
+    IntCenterLeft,
+    IntCenterRight,
+}
+
+#[cfg(feature = "internal")]
+#[derive(Debug, Copy, Clone, Default, Serialize, Deserialize)]
+pub enum TextVerticalAlignment {
+    #[default]
+    Center,
+    Top,
+    Bottom,
 }
