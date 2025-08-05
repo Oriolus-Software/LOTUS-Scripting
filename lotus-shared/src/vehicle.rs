@@ -85,6 +85,14 @@ impl Axle {
         }
     }
 
+    pub fn axle_index(self) -> usize {
+        self.axle_index
+    }
+
+    pub fn bogie_index(self) -> usize {
+        self.bogie_index
+    }
+
     /// Gets the curvature of the track under the given axis.
     /// The curvature is the reciprocal of the radius (1/R), which has the advantage that the value does not tend to infinity in a straight line, but tends to 0.
     /// The values are very small due to this calculation: Even a radius of only 100m leads to a value of 0.01, larger radii lead to even smaller values.
