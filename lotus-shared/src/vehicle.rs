@@ -200,6 +200,7 @@ pub enum RailQuality {
     HighSpeedSmooth = 5,
     SmoothDirt = 6,
     RoughDirt = 7,
+    Deraileur = 8,
 }
 
 impl TryFrom<u32> for RailQuality {
@@ -215,6 +216,7 @@ impl TryFrom<u32> for RailQuality {
             5 => Ok(RailQuality::HighSpeedSmooth),
             6 => Ok(RailQuality::SmoothDirt),
             7 => Ok(RailQuality::RoughDirt),
+            8 => Ok(RailQuality::Deraileur),
             value => Err(value.into()),
         }
     }
