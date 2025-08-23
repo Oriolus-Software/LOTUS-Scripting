@@ -67,10 +67,13 @@ pub trait MessageType: Serialize + DeserializeOwned {
 }
 
 /// Represents the source of a message.
-#[derive(Debug, Default, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct MessageSource {
     /// If the message is coming from another vehicle across couplings, this will be Some.
     pub coupling: Option<Coupling>,
+    /// If the message is coming from a module, these will be Some.
+    pub module_slot_index: Option<u16>,
+    pub module_slot_cockpit_index: Option<u8>,
 }
 
 impl MessageSource {
