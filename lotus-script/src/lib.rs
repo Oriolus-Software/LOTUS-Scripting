@@ -15,6 +15,7 @@ pub mod log;
 pub mod macros;
 pub mod math;
 pub mod message;
+pub mod module;
 pub mod public_vars;
 pub mod rand;
 #[doc(hidden)]

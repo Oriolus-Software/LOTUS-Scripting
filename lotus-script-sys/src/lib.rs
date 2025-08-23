@@ -147,6 +147,15 @@ pub mod vehicle {
     }
 }
 
+pub mod module {
+    #[link(wasm_import_module = "module")]
+    extern "C" {
+        pub fn module_slot_cockpit_index() -> i32;
+        pub fn module_slot_index_in_class_group() -> i32;
+        pub fn module_slot_index() -> i32;
+    }
+}
+
 pub trait FromFfi {
     type FfiType;
     fn from_ffi(ffi: Self::FfiType) -> Self;
