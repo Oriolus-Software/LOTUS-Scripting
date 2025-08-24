@@ -54,5 +54,5 @@ pub trait Script {
 
 /// Returns true if the object the script is attached to is remote controlled.
 pub fn is_rc() -> bool {
-    unsafe { lotus_script_sys::is_rc() }
+    unsafe { lotus_script_sys::env::is_rc() }
 }

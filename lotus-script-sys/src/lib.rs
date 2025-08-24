@@ -1,4 +1,3 @@
-use lotus_bindgen_macros::lotus_bindgen;
 use serde::{de::DeserializeOwned, Serialize};
 
 #[no_mangle]
@@ -18,9 +17,14 @@ pub extern "C" fn deallocate(ptr: u32, size: u32) {
     }
 }
 
-extern "C" {
-    #[lotus_bindgen]
-    pub fn is_rc() -> bool;
+pub mod env {
+    #[link(wasm_import_module = "env")]
+    extern "C" {
+        pub fn is_rc() -> bool;
+        pub fn module_slot_cockpit_index() -> i32;
+        pub fn module_slot_index_in_class_group() -> i32;
+        pub fn module_slot_index() -> i32;
+    }
 }
 
 pub mod assets {
@@ -144,15 +148,6 @@ pub mod vehicle {
         pub fn set_traction_force_newton(bogie: u32, axle: u32, value: f32);
         pub fn set_brake_force_newton(bogie: u32, axle: u32, value: f32);
         pub fn set_rail_brake_force_newton(bogie: u32, value: f32);
-    }
-}
-
-pub mod module {
-    #[link(wasm_import_module = "module")]
-    extern "C" {
-        pub fn module_slot_cockpit_index() -> i32;
-        pub fn module_slot_index_in_class_group() -> i32;
-        pub fn module_slot_index() -> i32;
     }
 }
 
