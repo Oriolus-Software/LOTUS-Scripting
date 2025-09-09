@@ -290,26 +290,39 @@ pub enum Coupling {
 }
 
 impl Coupling {
+    #[cfg(feature = "ffi")]
     /// Opens the given bus.
-    pub fn open_bus(&self, _bus: &str) {
-        todo!()
+    pub fn open_bus(&self, bus: &str) {
+        let bus = lotus_script_sys::FfiObject::new(&bus);
+        unsafe { lotus_script_sys::vehicle::open_bus(*self as u32, bus.packed()) };
     }
 
+    #[cfg(feature = "ffi")]
     /// Closes the given bus.
-    pub fn close_bus(&self, _bus: &str) {
-        todo!()
+    pub fn close_bus(&self, bus: &str) {
+        let bus = lotus_script_sys::FfiObject::new(&bus);
+        unsafe { lotus_script_sys::vehicle::close_bus(*self as u32, bus.packed()) };
     }
 
+    #[cfg(feature = "ffi")]
     /// Returns `true` if the given bus is open.
-    pub fn is_open(&self, _bus: &str) -> bool {
-        todo!()
+    pub fn is_open(&self, bus: &str) -> bool {
+        let bus = lotus_script_sys::FfiObject::new(&bus);
+        unsafe { lotus_script_sys::vehicle::is_bus_open(*self as u32, bus.packed()) == 1 }
     }
 
     #[cfg(feature = "ffi")]
     pub fn is_coupled(&self) -> bool {
-        match self {
-            Self::Front => unsafe { lotus_script_sys::vehicle::is_coupled(0) == 1 },
-            Self::Rear => unsafe { lotus_script_sys::vehicle::is_coupled(1) == 1 },
+        unsafe { lotus_script_sys::vehicle::is_coupled(*self as u32) == 1 }
+    }
+}
+
+impl From<u32> for Coupling {
+    fn from(value: u32) -> Self {
+        match value {
+            0 => Self::Front,
+            1 => Self::Rear,
+            _ => panic!("invalid coupling value: {}", value),
         }
     }
 }

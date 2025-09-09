@@ -138,6 +138,9 @@ pub mod vehicle {
         pub fn axle_is_valid(bogie: u32, axle: u32) -> u32;
         pub fn pantograph_is_valid(end: u32) -> u32;
         pub fn is_coupled(coupling: u32) -> u32;
+        pub fn open_bus(coupling: u32, bus: u64);
+        pub fn close_bus(coupling: u32, bus: u64);
+        pub fn is_bus_open(coupling: u32, bus: u64) -> u32;
         pub fn rail_quality(bogie: u32, axle: u32) -> u32;
         pub fn surface_type(bogie: u32, axle: u32) -> u32;
         pub fn inverse_radius(bogie: u32, axle: u32) -> f32;
