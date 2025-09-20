@@ -24,6 +24,7 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Message {
     meta: MessageMeta,
+    #[cfg_attr(feature = "engine", serde(default))]
     source: MessageSource,
     value: serde_json::Value,
 }
