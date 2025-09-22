@@ -68,6 +68,7 @@ pub mod textures {
         pub fn flush_actions(texture: u32) -> u32;
         pub fn dispose(texture: u32);
         pub fn fetch_drawable_texture_properties() -> u64;
+        pub fn expose(texture: u32, name: u64);
     }
 }
 

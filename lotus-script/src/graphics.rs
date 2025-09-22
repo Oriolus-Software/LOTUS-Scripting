@@ -132,6 +132,12 @@ pub mod textures {
         pub fn forget(mut self) {
             self.0 = TextureHandle::new(u32::MAX);
         }
+
+        /// Expose the texture to the plugin API under the given name.
+        pub fn expose(&self, name: &str) {
+            let name = FfiObject::new(&name);
+            unsafe { lotus_script_sys::textures::expose(self.0.id(), name.packed()) }
+        }
     }
 
     impl Drop for Texture {
