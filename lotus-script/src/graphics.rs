@@ -5,7 +5,11 @@ pub use lotus_shared::graphics::*;
 
 pub mod textures {
     use lotus_script_sys::FfiObject;
-    use lotus_shared::{content::ContentId, graphics::Color, math::UVec2};
+    use lotus_shared::{
+        content::ContentId,
+        graphics::Color,
+        math::{IVec2, UVec2},
+    };
 
     pub use lotus_shared::graphics::textures::*;
 
@@ -100,7 +104,7 @@ pub mod textures {
             &mut self,
             font: ContentId,
             text: impl Into<String>,
-            top_left: impl Into<UVec2>,
+            top_left: impl Into<IVec2>,
             letter_spacing: u32,
             full_color: impl Into<Option<Color>>,
             alpha_mode: AlphaMode,

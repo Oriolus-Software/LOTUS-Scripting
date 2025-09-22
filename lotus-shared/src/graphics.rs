@@ -101,6 +101,7 @@ mod _image {
 pub mod textures {
     use std::borrow::Cow;
 
+    use glam::IVec2;
     use serde::{Deserialize, Serialize};
 
     use crate::{
@@ -169,7 +170,7 @@ pub mod textures {
         DrawText {
             font: ContentId,
             text: String,
-            top_left: UVec2,
+            top_left: IVec2,
             letter_spacing: u32,
             full_color: Option<Color>,
             alpha_mode: AlphaMode,
