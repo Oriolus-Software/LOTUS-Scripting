@@ -44,7 +44,7 @@ impl ActionsBuilder {
 }
 
 /// Describes an event that is sent when an action is triggered.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ActionEvent {
     pub name: String,
     pub state: ActionState,
