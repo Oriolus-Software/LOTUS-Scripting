@@ -1,3 +1,4 @@
+use glam::Vec2;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
@@ -41,10 +42,11 @@ impl ActionStateKind {
 }
 
 /// The state of an action.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct ActionState {
     pub kind: ActionStateKind,
     pub cockpit_index: Option<u8>,
+    pub uv: Option<Vec2>,
 }
 
 macro_rules! key_code_struct {
