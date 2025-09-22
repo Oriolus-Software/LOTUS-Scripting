@@ -174,6 +174,7 @@ pub mod textures {
             letter_spacing: u32,
             full_color: Option<Color>,
             alpha_mode: AlphaMode,
+            target_rect: Option<Rectangle>,
         },
         // DrawTexture {
         //     texture: ContentId,

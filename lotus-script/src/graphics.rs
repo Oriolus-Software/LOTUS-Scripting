@@ -8,7 +8,7 @@ pub mod textures {
     use lotus_shared::{
         content::ContentId,
         graphics::Color,
-        math::{IVec2, UVec2},
+        math::{IVec2, Rectangle, UVec2},
     };
 
     pub use lotus_shared::graphics::textures::*;
@@ -100,6 +100,7 @@ pub mod textures {
         }
 
         /// Draws a text on the texture.
+        #[expect(clippy::too_many_arguments)]
         pub fn draw_text(
             &mut self,
             font: ContentId,
@@ -108,6 +109,7 @@ pub mod textures {
             letter_spacing: u32,
             full_color: impl Into<Option<Color>>,
             alpha_mode: AlphaMode,
+            target_rect: impl Into<Option<Rectangle>>,
         ) {
             self.add_action(TextureAction::DrawText {
                 font,
@@ -116,6 +118,7 @@ pub mod textures {
                 letter_spacing,
                 full_color: full_color.into(),
                 alpha_mode,
+                target_rect: target_rect.into(),
             });
         }
 
