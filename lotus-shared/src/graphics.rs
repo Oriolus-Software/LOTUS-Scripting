@@ -52,6 +52,29 @@ impl From<Color> for u32 {
     }
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub struct Font(u32);
+
+impl Font {
+    #[cfg(feature = "ffi")]
+    pub fn load_ttf(bytes: &[u8]) -> Self {
+        let font = lotus_script_sys::FfiObject::new(&bytes);
+        let font = unsafe { lotus_script_sys::font::load_ttf(font.packed()) };
+        Self(font)
+    }
+
+    #[cfg(feature = "engine")]
+    pub fn id(&self) -> u32 {
+        self.0
+    }
+}
+
+impl std::fmt::Display for Font {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Font({})", self.0)
+    }
+}
+
 #[cfg(feature = "bevy")]
 mod _bevy {
     use super::*;
@@ -175,6 +198,11 @@ pub mod textures {
             full_color: Option<Color>,
             alpha_mode: AlphaMode,
             target_rect: Option<Rectangle>,
+        },
+        DrawTextTtf {
+            font: super::Font,
+            text: String,
+            start: IVec2,
         },
         // DrawTexture {
         //     texture: ContentId,

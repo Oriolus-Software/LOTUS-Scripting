@@ -129,6 +129,8 @@ pub mod font {
         /// Returns: -1 if the font is not loaded.
         /// Returns: >0 is the width of the text.
         pub fn text_len(font: u64, text: u64, letter_spacing: i32) -> i32;
+
+        pub fn load_ttf(bytes: u64) -> u32;
     }
 }
 
