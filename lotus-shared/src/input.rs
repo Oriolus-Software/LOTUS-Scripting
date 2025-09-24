@@ -45,7 +45,9 @@ impl ActionStateKind {
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct ActionState {
     pub kind: ActionStateKind,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cockpit_index: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub uv: Option<Vec2>,
 }
 
