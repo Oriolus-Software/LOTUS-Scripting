@@ -1,5 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "internal")]
+use crate::content::ContentId;
+
 /// A color in the RGBA format.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Color {
