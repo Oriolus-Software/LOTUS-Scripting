@@ -647,6 +647,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "lotus-script"
+version = "0.7.0"
+dependencies = [
+ "lotus-bindgen-macros",
+ "lotus-script-sys",
+ "lotus-shared",
+ "rmp-serde",
+ "serde",
+ "serde_json",
+ "serde_repr",
+ "thiserror",
+]
+
+[[package]]
 name = "lotus-script-sys"
 version = "0.5.0"
 dependencies = [

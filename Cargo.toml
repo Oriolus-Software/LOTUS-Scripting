@@ -1,5 +1,10 @@
 [workspace]
-members = ["lotus-bindgen-macros", "lotus-script-sys", "lotus-shared"]
+members = [
+  "lotus-bindgen-macros",
+  "lotus-script-sys",
+  "lotus-shared",
+  "lotus-script",
+]
 resolver = "2"
 
 [workspace.dependencies]
