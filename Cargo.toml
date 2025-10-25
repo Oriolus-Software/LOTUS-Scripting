@@ -1,10 +1,5 @@
 [workspace]
-members = [
-  "lotus-bindgen-macros",
-  "lotus-sc",
-  "lotus-script-sys",
-  "lotus-shared",
-]
+members = ["lotus-bindgen-macros", "lotus-script-sys", "lotus-shared"]
 resolver = "2"
 
 [workspace.dependencies]
@@ -15,9 +10,9 @@ clap = "4"
 dirs = "6"
 image = { version = "0.25.2", default-features = false }
 lotus-bindgen-macros = { version = "0.1", path = "./lotus-bindgen-macros" }
-lotus-script = { version = "0.6", path = "./lotus-script" }
-lotus-script-sys = { version = "0.3", path = "./lotus-script-sys" }
-lotus-shared = { version = "0.4", path = "./lotus-shared" }
+lotus-script = { version = "0.7", path = "./lotus-script" }
+lotus-script-sys = { version = "0.5", path = "./lotus-script-sys" }
+lotus-shared = { version = "0.5", path = "./lotus-shared" }
 proc-macro2 = "1"
 quote = "1"
 rmp-serde = "1"
