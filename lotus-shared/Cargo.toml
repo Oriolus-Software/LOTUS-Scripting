@@ -1,6 +1,6 @@
 [package]
 name = "lotus-shared"
-version = "0.5.0"
+version = "0.5.1"
 edition = "2021"
 description = "Shared code for LOTUS scripts and engine."
 license = "MIT/Apache-2.0"
