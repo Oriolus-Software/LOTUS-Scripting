@@ -2,8 +2,6 @@ pub use lotus_bindgen_macros::lotus_bindgen;
 
 use message::Message;
 
-use crate::var::get_var;
-
 pub mod action;
 pub mod content;
 #[doc(hidden)]
