@@ -2,6 +2,8 @@ pub use lotus_bindgen_macros::lotus_bindgen;
 
 use message::Message;
 
+use crate::var::get_var;
+
 pub mod action;
 pub mod content;
 #[doc(hidden)]
@@ -30,7 +32,7 @@ pub mod prelude {
         log,
         message::{message_type, send_message, Message, MessageTarget, MessageType},
         rand, script, time,
-        var::{get_var, set_var},
+        var::{get_var, set_var, VariableType},
         Script,
     };
 }
