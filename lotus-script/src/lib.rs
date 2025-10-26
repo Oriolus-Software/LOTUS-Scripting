@@ -31,7 +31,7 @@ pub mod prelude {
         message::{message_type, send_message, Message, MessageTarget, MessageType},
         rand, script, time,
         var::{get_var, set_var, VariableType},
-        Script,
+        vehicle, Script,
     };
 }
 
