@@ -16,7 +16,7 @@ time = ["dep:time"]
 
 [dependencies]
 bevy = { workspace = true, optional = true, features = ["bevy_color"] }
-glam = { version = "0.29", features = ["serde"] }
+glam = { version = "0.30", features = ["serde"] }
 image = { workspace = true, optional = true }
 lotus-script-sys = { workspace = true, optional = true }
 serde = { workspace = true, features = ["derive"] }
