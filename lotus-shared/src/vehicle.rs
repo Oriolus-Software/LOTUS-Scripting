@@ -12,6 +12,10 @@ pub enum VehicleError {
     CouplingNotFound = 2048,
     #[error("pantograph not found")]
     PantographNotFound = 4096,
+    #[error("road axle not found")]
+    RoadAxleNotFound = 8192,
+    #[error("road wheel not found")]
+    RoadWheelNotFound = 16384,
     #[error("unknown error")]
     Unknown = 0,
 }
@@ -22,7 +26,10 @@ impl From<u32> for VehicleError {
             256 => VehicleError::VehicleNotFound,
             512 => VehicleError::BogieNotFound,
             1024 => VehicleError::AxleNotFound,
-            2048 => VehicleError::PantographNotFound,
+            2048 => VehicleError::CouplingNotFound,
+            4096 => VehicleError::PantographNotFound,
+            8192 => VehicleError::RoadAxleNotFound,
+            16384 => VehicleError::RoadWheelNotFound,
             _ => VehicleError::Unknown,
         }
     }
@@ -149,6 +156,76 @@ impl Axle {
             lotus_script_sys::vehicle::set_brake_force_newton(
                 self.bogie_index as u32,
                 self.axle_index as u32,
+                value,
+            )
+        };
+    }
+}
+
+#[cfg(feature = "ffi")]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct RoadAxle {
+    index: usize,
+}
+
+#[cfg(feature = "ffi")]
+impl RoadAxle {
+    pub fn get(index: usize) -> Result<Self, VehicleError> {
+        match unsafe { lotus_script_sys::vehicle::road_axle_is_valid(index as u32) } {
+            0 => Ok(Self { index }),
+            e => Err(e.into()),
+        }
+    }
+}
+
+#[cfg(feature = "ffi")]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct RoadWheel {
+    axle_index: usize,
+    wheel_index: usize,
+}
+
+#[cfg(feature = "ffi")]
+impl RoadWheel {
+    pub fn get(axle_index: usize, wheel_index: usize) -> Result<Self, VehicleError> {
+        match unsafe {
+            lotus_script_sys::vehicle::road_wheel_is_valid(axle_index as u32, wheel_index as u32)
+        } {
+            0 => Ok(Self {
+                axle_index,
+                wheel_index,
+            }),
+            e => Err(e.into()),
+        }
+    }
+
+    pub fn velocity_var_name(self) -> String {
+        format!("v_Wheel_{}_{}", self.axle_index, self.wheel_index)
+    }
+
+    pub fn wheel_index(self) -> usize {
+        self.wheel_index
+    }
+
+    pub fn axle_index(self) -> usize {
+        self.axle_index
+    }
+
+    pub fn set_traction_torque_newton_meter(self, value: f32) {
+        unsafe {
+            lotus_script_sys::vehicle::set_wheel_traction_torque_newton_meter(
+                self.axle_index as u32,
+                self.wheel_index as u32,
+                value,
+            )
+        };
+    }
+
+    pub fn set_brake_torque_newton_meter(self, value: f32) {
+        unsafe {
+            lotus_script_sys::vehicle::set_wheel_brake_torque_newton_meter(
+                self.axle_index as u32,
+                self.wheel_index as u32,
                 value,
             )
         };
