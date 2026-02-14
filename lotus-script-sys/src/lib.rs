@@ -137,6 +137,8 @@ pub mod vehicle {
     extern "C" {
         pub fn bogie_is_valid(bogie: u32) -> u32;
         pub fn axle_is_valid(bogie: u32, axle: u32) -> u32;
+        pub fn road_axle_is_valid(axle: u32) -> u32;
+        pub fn road_wheel_is_valid(axle: u32, wheel: u32) -> u32;
         pub fn pantograph_is_valid(end: u32) -> u32;
         pub fn is_coupled(coupling: u32) -> u32;
         pub fn open_bus(coupling: u32, bus: u64);
@@ -147,11 +149,14 @@ pub mod vehicle {
         pub fn inverse_radius(bogie: u32, axle: u32) -> f32;
         pub fn velocity_vs_ground() -> f32;
         pub fn acceleration_vs_ground() -> f32;
+        pub fn set_road_steering_force(force: f32);
         pub fn pantograph_height(pantograph: u32) -> f32;
         pub fn pantograph_voltage(pantograph: u32) -> f32;
         pub fn set_traction_force_newton(bogie: u32, axle: u32, value: f32);
         pub fn set_brake_force_newton(bogie: u32, axle: u32, value: f32);
         pub fn set_rail_brake_force_newton(bogie: u32, value: f32);
+        pub fn set_wheel_traction_force_newton(axle: u32, wheel: u32, value: f32);
+        pub fn set_wheel_brake_force_newton(axle: u32, wheel: u32, value: f32);
     }
 }
 
