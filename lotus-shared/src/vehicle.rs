@@ -211,6 +211,7 @@ impl RoadWheel {
         self.axle_index
     }
 
+    /// Sets the traction force at the running surface in newton.
     pub fn set_traction_force_newton(self, value: f32) {
         unsafe {
             lotus_script_sys::vehicle::set_wheel_traction_force_newton(
@@ -221,6 +222,7 @@ impl RoadWheel {
         };
     }
 
+    /// Sets the brake force at the running surface in newton.
     pub fn set_brake_force_newton(self, value: f32) {
         unsafe {
             lotus_script_sys::vehicle::set_wheel_brake_force_newton(
