@@ -322,3 +322,42 @@ impl TryFrom<u32> for SurfaceType {
         }
     }
 }
+
+#[derive(Clone, Copy)]
+pub struct RoadSteeringSpringDamperManipulator {
+    /// The stiffness is added to the default stiffness.
+    pub stiffness_add: f32,
+    /// The stiffness is multiplied by the default stiffness.
+    pub stiffness_mult: f32,
+    /// The damping is added to the default damping.
+    pub damping_add: f32,
+    /// The damping is multiplied by the default damping.
+    pub damping_mult: f32,
+}
+
+impl Default for RoadSteeringSpringDamperManipulator {
+    fn default() -> Self {
+        Self {
+            stiffness_add: 0.0,
+            stiffness_mult: 1.0,
+            damping_add: 0.0,
+            damping_mult: 1.0,
+        }
+    }
+}
+
+impl RoadSteeringSpringDamperManipulator {
+    pub fn new(
+        stiffness_add: f32,
+        stiffness_mult: f32,
+        damping_add: f32,
+        damping_mult: f32,
+    ) -> Self {
+        Self {
+            stiffness_add,
+            stiffness_mult,
+            damping_add,
+            damping_mult,
+        }
+    }
+}

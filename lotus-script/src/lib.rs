@@ -34,6 +34,7 @@ pub mod prelude {
         vehicle, Script,
     };
 }
+pub use lotus_shared::animation::*;
 
 pub trait Script {
     /// Initialize the script.

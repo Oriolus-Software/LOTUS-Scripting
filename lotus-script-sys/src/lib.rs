@@ -132,6 +132,14 @@ pub mod font {
     }
 }
 
+pub mod animation {
+    #[link(wasm_import_module = "animation")]
+    extern "C" {
+        pub fn get_animation_index(name: u64) -> i32;
+        pub fn get_animation_global_acceleration_velocity(index: i32) -> u64;
+    }
+}
+
 pub mod vehicle {
     #[link(wasm_import_module = "vehicle")]
     extern "C" {
@@ -150,6 +158,12 @@ pub mod vehicle {
         pub fn velocity_vs_ground() -> f32;
         pub fn acceleration_vs_ground() -> f32;
         pub fn set_road_steering_force(force: f32);
+        pub fn set_road_steering_spring_damper_manipulation(
+            stiffness_add: f32,
+            stiffness_mult: f32,
+            damping_add: f32,
+            damping_mult: f32,
+        );
         pub fn pantograph_height(pantograph: u32) -> f32;
         pub fn pantograph_voltage(pantograph: u32) -> f32;
         pub fn set_traction_force_newton(bogie: u32, axle: u32, value: f32);

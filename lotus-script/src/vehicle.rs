@@ -17,3 +17,15 @@ pub fn acceleration_vs_ground() -> f32 {
 pub fn set_road_steering_force(force: f32) {
     unsafe { lotus_script_sys::vehicle::set_road_steering_force(force) }
 }
+
+/// If it is a road vehicle, you can manipulate steering stiffness and damping with this function.
+pub fn set_road_steering_spring_damper_manipulation(values: RoadSteeringSpringDamperManipulator) {
+    unsafe {
+        lotus_script_sys::vehicle::set_road_steering_spring_damper_manipulation(
+            values.stiffness_add,
+            values.stiffness_mult,
+            values.damping_add,
+            values.damping_mult,
+        )
+    }
+}

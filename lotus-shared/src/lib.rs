@@ -1,4 +1,5 @@
 pub mod action;
+pub mod animation;
 pub mod content;
 pub mod font;
 pub mod gizmos;
