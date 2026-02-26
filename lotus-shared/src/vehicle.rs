@@ -232,6 +232,17 @@ impl RoadWheel {
             )
         };
     }
+
+    /// Sets the factor, which manipulates the spring stiffness.
+    pub fn set_spring_factor(self, value: f32) {
+        unsafe {
+            lotus_script_sys::vehicle::set_wheel_spring_factor(
+                self.axle_index as u32,
+                self.wheel_index as u32,
+                value,
+            )
+        };
+    }
 }
 
 #[cfg(feature = "ffi")]

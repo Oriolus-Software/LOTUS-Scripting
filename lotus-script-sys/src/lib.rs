@@ -171,6 +171,7 @@ pub mod vehicle {
         pub fn set_rail_brake_force_newton(bogie: u32, value: f32);
         pub fn set_wheel_traction_force_newton(axle: u32, wheel: u32, value: f32);
         pub fn set_wheel_brake_force_newton(axle: u32, wheel: u32, value: f32);
+        pub fn set_wheel_spring_factor(axle: u32, wheel: u32, value: f32);
     }
 }
 
