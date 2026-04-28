@@ -118,6 +118,8 @@ pub mod input {
     #[link(wasm_import_module = "input")]
     extern "C" {
         pub fn mouse_delta() -> u64;
+        pub fn mouse_position() -> u64;
+        pub fn mouse_steering_active() -> bool;
     }
 }
 

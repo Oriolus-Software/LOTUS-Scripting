@@ -9,3 +9,12 @@ pub fn mouse_delta() -> Vec2 {
     let delta = unsafe { lotus_script_sys::input::mouse_delta() };
     FfiObject::from_packed(delta).deserialize()
 }
+
+pub fn mouse_position() -> Vec2 {
+    let delta = unsafe { lotus_script_sys::input::mouse_position() };
+    FfiObject::from_packed(delta).deserialize()
+}
+
+pub fn mouse_steering_active() -> bool {
+    unsafe { lotus_script_sys::input::mouse_steering_active() }
+}
