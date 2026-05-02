@@ -1,4 +1,7 @@
+use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
+
+use crate::message::{MessageMeta, MessageType};
 
 #[derive(Debug, thiserror::Error)]
 pub enum VehicleError {
@@ -33,6 +36,17 @@ impl From<u32> for VehicleError {
             _ => VehicleError::Unknown,
         }
     }
+}
+
+/// Describes an event that is sent when the train configuration is changed.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct VehicleInTrainChangedEvent {
+    pub reversed_to_train: bool,
+    pub index_in_train: usize,
+}
+
+impl MessageType for VehicleInTrainChangedEvent {
+    const MESSAGE_META: MessageMeta = MessageMeta::new("builtin", "vehicle_in_train_changed", None);
 }
 
 #[cfg(feature = "ffi")]
