@@ -327,6 +327,25 @@ impl From<u32> for Coupling {
     }
 }
 
+impl From<usize> for Coupling {
+    fn from(value: usize) -> Self {
+        match value {
+            0 => Self::Front,
+            1 => Self::Rear,
+            _ => panic!("invalid coupling value: {}", value),
+        }
+    }
+}
+
+impl From<Coupling> for usize {
+    fn from(value: Coupling) -> Self {
+        match value {
+            Coupling::Front => 0,
+            Coupling::Rear => 1,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use serde::Deserialize;
