@@ -40,13 +40,13 @@ impl From<u32> for VehicleError {
 
 /// Describes an event that is sent when the train configuration is changed.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct VehicleInTrainChangedEvent {
+pub struct TrainConfigurationChanged {
     pub entity_id: u64,
     pub reversed_to_train: bool,
     pub index_in_train: usize,
 }
 
-impl MessageType for VehicleInTrainChangedEvent {
+impl MessageType for TrainConfigurationChanged {
     const MESSAGE_META: MessageMeta = MessageMeta::new("builtin", "vehicle_in_train_changed", None);
 }
 
