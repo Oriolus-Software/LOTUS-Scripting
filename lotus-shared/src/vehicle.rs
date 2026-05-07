@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::message::{MessageMeta, MessageType};
+use crate::message::{Coupling, MessageMeta, MessageType};
 
 #[derive(Debug, thiserror::Error)]
 pub enum VehicleError {
@@ -38,16 +38,39 @@ impl From<u32> for VehicleError {
     }
 }
 
+#[cfg(feature = "ffi")]
+/// Returns `true` if the vehicle was spawned inverted to the train.
+pub fn spawned_inverted_to_train() -> bool {
+    unsafe { lotus_script_sys::vehicle::spawned_inverted_to_train() == 1 }
+}
+
 /// Describes an event that is sent when the train configuration is changed.
+/// Please note: When two trains with different directions are coupled,
+/// the new direction cannot be predicted!
+/// In the vehicles of the train whose direction is inverted when coupling,
+/// "reversed_to_train" is inverted and the index order reverses.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TrainConfigurationChanged {
     pub entity_id: u64,
     pub reversed_to_train: bool,
     pub index_in_train: usize,
+    pub train_vehicle_count: usize,
 }
 
 impl MessageType for TrainConfigurationChanged {
     const MESSAGE_META: MessageMeta = MessageMeta::new("builtin", "vehicle_in_train_changed", None);
+}
+
+/// Calculation of the vehicle count in front or behind the vehicle
+/// relative to the vehicle.
+impl TrainConfigurationChanged {
+    pub fn neighbour_vehicle_count(&self, coupling: Coupling) -> usize {
+        if (coupling == Coupling::Rear) ^ self.reversed_to_train {
+            self.train_vehicle_count - self.index_in_train - 1
+        } else {
+            self.index_in_train
+        }
+    }
 }
 
 #[cfg(feature = "ffi")]
