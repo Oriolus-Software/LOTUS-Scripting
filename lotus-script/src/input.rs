@@ -15,6 +15,25 @@ pub fn mouse_position() -> Vec2 {
     FfiObject::from_packed(delta).deserialize()
 }
 
-pub fn mouse_steering_active() -> bool {
-    unsafe { lotus_script_sys::input::mouse_steering_active() }
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum MouseSteeringMode {
+    #[default]
+    Inactive,
+    Active,
+    ActiveBoost,
+}
+
+impl From<u32> for MouseSteeringMode {
+    fn from(value: u32) -> Self {
+        match value {
+            1 => Self::Active,
+            2 => Self::ActiveBoost,
+            _ => Self::Inactive,
+        }
+    }
+}
+
+pub fn mouse_steering_mode() -> MouseSteeringMode {
+    let active = unsafe { lotus_script_sys::input::mouse_steering_mode() };
+    active.into()
 }

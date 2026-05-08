@@ -119,7 +119,7 @@ pub mod input {
     extern "C" {
         pub fn mouse_delta() -> u64;
         pub fn mouse_position() -> u64;
-        pub fn mouse_steering_active() -> bool;
+        pub fn mouse_steering_mode() -> u32;
     }
 }
 
