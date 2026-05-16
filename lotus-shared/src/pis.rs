@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+#[doc(hidden)]
 #[derive(Clone)]
 pub struct PisGroup {
     pub name: String,                       // NAME
@@ -10,6 +11,7 @@ pub struct PisGroup {
 }
 
 impl PisGroup {
+    /// Holt den Namen der aktiven PIS-Gruppe.
     #[cfg(feature = "ffi")]
     pub fn get_name() -> String {
         let name =
@@ -17,6 +19,7 @@ impl PisGroup {
         name.deserialize()
     }
 
+    /// Holt die Station mit der gegebenen Code.
     #[cfg(feature = "ffi")]
     pub fn get_station(code: i32) -> Option<PisStation> {
         let station = lotus_script_sys::FfiObject::from_packed(unsafe {
@@ -25,6 +28,7 @@ impl PisGroup {
         station.deserialize()
     }
 
+    /// Holt die gesamte Liste sämtlicher Sonderzeichen
     #[cfg(feature = "ffi")]
     pub fn get_special_chars() -> Vec<PisSpecialChar> {
         let special_chars = lotus_script_sys::FfiObject::from_packed(unsafe {
@@ -33,15 +37,17 @@ impl PisGroup {
         special_chars.deserialize()
     }
 
+    /// Holt die Route mit der gegebenen Linie und Code.
     #[cfg(feature = "ffi")]
-    pub fn get_route(line: i32, code: i32) -> Option<PisRoute> {
+    pub fn get_route(line_code: (i32, i32)) -> Option<PisRoute> {
         let route = lotus_script_sys::FfiObject::from_packed(unsafe {
-            lotus_script_sys::pis::get_route(line, code)
+            lotus_script_sys::pis::get_route(line_code.0, line_code.1)
         });
         route.deserialize()
     }
 
-    /// bereits sortiert und ohne Duplikate
+    /// Liefert eine Liste sämtlicher Route-Codes, die es für die gegebenen Linie gibt.
+    /// Die Liste ist bereits sortiert und frei von Duplikaten.
     #[cfg(feature = "ffi")]
     pub fn get_route_codes_by_line(line: i32) -> Vec<i32> {
         let route_codes = lotus_script_sys::FfiObject::from_packed(unsafe {
@@ -50,6 +56,7 @@ impl PisGroup {
         route_codes.deserialize()
     }
 
+    /// Holt den Namen des Leitstellen-Servers.
     #[cfg(feature = "ffi")]
     pub fn get_server_name() -> Option<String> {
         let server_name = lotus_script_sys::FfiObject::from_packed(unsafe {
@@ -59,31 +66,63 @@ impl PisGroup {
     }
 }
 
+/// Datensatz für eine Station im PIS.
 #[derive(Clone, Serialize, Deserialize)]
 pub struct PisStation {
-    pub id: String, // ID__
-    pub code: i32,  // CODE
+    /// Mit der ID wird die Station mit der Map verknüpft (auch dort gibt es eine ID für jede Station).
+    /// Dies ist u.A. für die Fahrgäste und die öffentlichen KI-Fahrzeuge notwendig.
+    pub id: String,
+    /// Der Code ist die Zahl, mit der die Station innerhalb des PIS identifiziert wird.
+    /// Dieser Code wird für die Anzeige auf dem PIS-Display verwendet.
+    pub code: i32,
+    /// Die Strings sind die Texte, die auf den Innenanzeigen angezeigt werden. Zwei Strings gibt es
+    /// z.B. für Wechselanzeigen
     pub strings_station: [Option<String>; 2],
+    /// Diese Strings sind für die Front-Außenanzeige.
     pub strings_front: [Option<String>; 2],
+    /// Diese Strings sind für die Seiten-Außenanzeige, wenn diese zweizeilig ist.
     pub strings_side: [Option<String>; 2],
+    /// Dieser String ist für die Seiten-Außenanzeige, wenn diese einzeilig ist.
     pub string_side_oneline: Option<String>,
 }
 
+/// Datensatz für ein Sonderzeichen im PIS.
 #[derive(Clone, Serialize, Deserialize)]
 pub struct PisSpecialChar {
-    pub code: i32,     // CODE
+    /// Der Code ist die Zahl, mit der das Sonderzeichen innerhalb des PIS identifiziert wird.
+    pub code: i32,
+    /// Der Sonderzeichen-String, wobei dieser auch über bestimmte Codes verfügen kann, mit denen
+    /// die originale Liniennummer eingefügt werden kann.
+    ///
+    /// So bedeutet z.B. "M(R2-R1)", dass das auf dem Linienfeld ein M, gefolgt von
+    /// den Ziffern 2 bis 1 von RECHTS aus gezählt, angezeigt wird. Wenn die Liniennummer
+    /// z.B. 123 ist, dann wird hier M23 angezeigt.
+    /// Soll nur M2 angezeigt werden, müsste man "M(R2-R2)" als chars eintragen.
     pub chars: String, // STRN
 }
 
+/// Datensatz für eine Route im PIS. Jeder Datensatz wird über eine
+/// Liniennummer und einen Code innerhalb der Linie identifiziert.
 #[derive(Clone, Serialize, Deserialize)]
 pub struct PisRoute {
-    pub line: i32,                      // LINE
-    pub code: i32,                      // CODE
-    pub stop_codes: Vec<i32>,           // STPS
-    pub special_char_code: Option<i32>, // SPCR
-    pub text: Option<String>,           // TEXT
-    pub termini: Vec<PisRouteTerminus>, // TMIN
-    pub following: Option<i32>,         // FOLW
+    /// Liniennummer und Code innerhalb der Linie zur Zuordnung
+    pub line_code: (i32, i32),
+    /// Liste der Codes der Haltestellen, die auf der Route nacheinander
+    /// angefahren werden, inklusive der Abfahrts- und der Endhaltestelle.
+    pub stop_codes: Vec<i32>,
+    /// Der Codes des Sonderzeichens, welcher automatisch ausgewählt werden soll,
+    /// wenn diese Route eingestellt wird. Ob dieser Code überschrieben werden kann usw.
+    /// ist abhängig vom Bordrechner.
+    pub special_char_code: Option<i32>,
+    /// Zusätzliches Textfeld, welches aber aktuell keine bestimmte Bedeutung hat.
+    pub text: Option<String>,
+    /// Im einfachsten Fall ist das Ziel (der Zielcode) einer Route einfach die letzte
+    /// Haltestelle. Es kann aber sein, dass das angezeigte Ziel ab einer bestimmten
+    /// Haltestelle wechseln soll, oder auch die Zielhaltestelle anders angezeigt werden soll.
+    /// Für diese Fälle kann man Termini definieren.
+    pub termini: Vec<PisRouteTerminus>,
+    /// Linie/Code für die automatisch zu wählende folgende Route
+    pub following_line_code: Option<(i32, i32)>,
 }
 
 #[derive(Default, Clone, Serialize, Deserialize)]
