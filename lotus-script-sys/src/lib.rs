@@ -178,6 +178,18 @@ pub mod vehicle {
     }
 }
 
+pub mod pis {
+    #[link(wasm_import_module = "pis")]
+    extern "C" {
+        pub fn get_name() -> u64;
+        pub fn get_station(code: i32) -> u64;
+        pub fn get_special_chars() -> u64;
+        pub fn get_route(line: i32, code: i32) -> u64;
+        pub fn get_route_codes_by_line(line: i32) -> u64;
+        pub fn get_server_name() -> u64;
+    }
+}
+
 pub trait FromFfi {
     type FfiType;
     fn from_ffi(ffi: Self::FfiType) -> Self;
