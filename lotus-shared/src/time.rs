@@ -76,13 +76,15 @@ mod _time {
                 (self.time_unix_micros % 1_000_000 * 1_000) as i32,
             )
         }
+    }
+}
 
-        pub fn from_unix_micros(unix_micros: i64) -> Self {
-            Self {
-                #[cfg(feature = "engine")]
-                speed_multiplier: 1.0,
-                time_unix_micros: unix_micros,
-            }
+impl GameTime {
+    pub fn from_unix_micros(unix_micros: i64) -> Self {
+        Self {
+            #[cfg(feature = "engine")]
+            speed_multiplier: 1.0,
+            time_unix_micros: unix_micros,
         }
     }
 }

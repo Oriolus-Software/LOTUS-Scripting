@@ -14,7 +14,7 @@ pub fn ticks_alive() -> u64 {
 }
 
 /// Get the current in-game time.
-#[cfg(feature = "time")]
+// #[cfg(feature = "time")]
 pub fn game_time() -> lotus_shared::time::GameTime {
     let unix_micros = unsafe { lotus_script_sys::time::game_time() };
     lotus_shared::time::GameTime::from_unix_micros(unix_micros)
