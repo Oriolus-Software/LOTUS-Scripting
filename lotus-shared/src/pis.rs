@@ -30,11 +30,11 @@ impl PisGroup {
 
     /// Holt die gesamte Liste sämtlicher Sonderzeichen
     #[cfg(feature = "ffi")]
-    pub fn get_special_chars() -> Vec<PisSpecialChar> {
-        let special_chars = lotus_script_sys::FfiObject::from_packed(unsafe {
-            lotus_script_sys::pis::get_special_chars()
+    pub fn get_special_char_with_line(line: u32, special_char_code: u32) -> String {
+        let route_codes = lotus_script_sys::FfiObject::from_packed(unsafe {
+            lotus_script_sys::pis::get_special_char_with_line(line, special_char_code)
         });
-        special_chars.deserialize()
+        route_codes.deserialize()
     }
 
     /// Holt die Route mit der gegebenen Linie und Code.
@@ -49,7 +49,7 @@ impl PisGroup {
     /// Liefert eine Liste sämtlicher Route-Codes, die es für die gegebenen Linie gibt.
     /// Die Liste ist bereits sortiert und frei von Duplikaten.
     #[cfg(feature = "ffi")]
-    pub fn get_special_char_with_line(line: u32, special_char_code: u32) -> String {
+    pub fn get_route_codes_by_line(line: u32) -> Vec<u32> {
         let route_codes = lotus_script_sys::FfiObject::from_packed(unsafe {
             lotus_script_sys::pis::get_special_char_with_line(line, special_char_code)
         });

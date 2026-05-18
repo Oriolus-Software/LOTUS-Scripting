@@ -183,9 +183,9 @@ pub mod pis {
     extern "C" {
         pub fn get_name() -> u64;
         pub fn get_station(code: u32) -> u64;
-        pub fn get_special_chars() -> u64;
-        pub fn get_route(line: u32, code: u32) -> u64;
         pub fn get_special_char_with_line(line: u32, special_char_code: u32) -> u64;
+        pub fn get_route(line: u32, code: u32) -> u64;
+        pub fn get_route_codes_by_line(line: u32) -> u64;
         pub fn get_server_name() -> u64;
     }
 }
