@@ -21,7 +21,7 @@ impl PisGroup {
 
     /// Holt die Station mit der gegebenen Code.
     #[cfg(feature = "ffi")]
-    pub fn get_station(code: i32) -> Option<PisStation> {
+    pub fn get_station(code: u32) -> Option<PisStation> {
         let station = lotus_script_sys::FfiObject::from_packed(unsafe {
             lotus_script_sys::pis::get_station(code)
         });
@@ -39,7 +39,7 @@ impl PisGroup {
 
     /// Holt die Route mit der gegebenen Linie und Code.
     #[cfg(feature = "ffi")]
-    pub fn get_route(line_code: (i32, i32)) -> Option<PisRoute> {
+    pub fn get_route(line_code: (u32, u32)) -> Option<PisRoute> {
         let route = lotus_script_sys::FfiObject::from_packed(unsafe {
             lotus_script_sys::pis::get_route(line_code.0, line_code.1)
         });
@@ -49,9 +49,9 @@ impl PisGroup {
     /// Liefert eine Liste sämtlicher Route-Codes, die es für die gegebenen Linie gibt.
     /// Die Liste ist bereits sortiert und frei von Duplikaten.
     #[cfg(feature = "ffi")]
-    pub fn get_route_codes_by_line(line: i32) -> Vec<i32> {
+    pub fn get_special_char_with_line(line: u32, special_char_code: u32) -> String {
         let route_codes = lotus_script_sys::FfiObject::from_packed(unsafe {
-            lotus_script_sys::pis::get_route_codes_by_line(line)
+            lotus_script_sys::pis::get_special_char_with_line(line, special_char_code)
         });
         route_codes.deserialize()
     }
@@ -74,7 +74,7 @@ pub struct PisStation {
     pub id: String,
     /// Der Code ist die Zahl, mit der die Station innerhalb des PIS identifiziert wird.
     /// Dieser Code wird für die Anzeige auf dem PIS-Display verwendet.
-    pub code: i32,
+    pub code: u32,
     /// Die Strings sind die Texte, die auf den Innenanzeigen angezeigt werden. Zwei Strings gibt es
     /// z.B. für Wechselanzeigen
     pub strings_station: [Option<String>; 2],
@@ -90,7 +90,7 @@ pub struct PisStation {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct PisSpecialChar {
     /// Der Code ist die Zahl, mit der das Sonderzeichen innerhalb des PIS identifiziert wird.
-    pub code: i32,
+    pub code: u32,
     /// Der Sonderzeichen-String, wobei dieser auch über bestimmte Codes verfügen kann, mit denen
     /// die originale Liniennummer eingefügt werden kann.
     ///
@@ -106,14 +106,14 @@ pub struct PisSpecialChar {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct PisRoute {
     /// Liniennummer und Code innerhalb der Linie zur Zuordnung
-    pub line_code: (i32, i32),
+    pub line_code: (u32, u32),
     /// Liste der Codes der Haltestellen, die auf der Route nacheinander
     /// angefahren werden, inklusive der Abfahrts- und der Endhaltestelle.
-    pub stop_codes: Vec<i32>,
+    pub stop_codes: Vec<u32>,
     /// Der Codes des Sonderzeichens, welcher automatisch ausgewählt werden soll,
     /// wenn diese Route eingestellt wird. Ob dieser Code überschrieben werden kann usw.
     /// ist abhängig vom Bordrechner.
-    pub special_char_code: Option<i32>,
+    pub special_char_code: Option<u32>,
     /// Zusätzliches Textfeld, welches aber aktuell keine bestimmte Bedeutung hat.
     pub text: Option<String>,
     /// Im einfachsten Fall ist das Ziel (der Zielcode) einer Route einfach die letzte
@@ -122,12 +122,17 @@ pub struct PisRoute {
     /// Für diese Fälle kann man Termini definieren.
     pub termini: Vec<PisRouteTerminus>,
     /// Linie/Code für die automatisch zu wählende folgende Route
-    pub following_line_code: Option<(i32, i32)>,
+    pub following_line_code: Option<(u32, u32)>,
 }
 
 #[derive(Default, Clone, Serialize, Deserialize)]
 pub struct PisRouteTerminus {
-    pub code: i32, // TERM
     /// Index of the stop of the route, from which this terminus applies    
-    pub stop_index: usize, // STOP
+    pub stop_index: usize,
+    /// New terminus code
+    pub code: Option<u32>,
+    /// New line
+    pub line: Option<u32>,
+    /// New special char code
+    pub special_char_code: Option<u32>,
 }
