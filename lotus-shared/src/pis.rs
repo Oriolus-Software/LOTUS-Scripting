@@ -49,9 +49,9 @@ impl PisGroup {
     /// Liefert eine Liste sämtlicher Route-Codes, die es für die gegebenen Linie gibt.
     /// Die Liste ist bereits sortiert und frei von Duplikaten.
     #[cfg(feature = "ffi")]
-    pub fn get_route_codes_by_line(line: u32, special_char_code: u32) -> Vec<u32> {
+    pub fn get_route_codes_by_line(line: u32) -> Vec<u32> {
         let route_codes = lotus_script_sys::FfiObject::from_packed(unsafe {
-            lotus_script_sys::pis::get_special_char_with_line(line, special_char_code)
+            lotus_script_sys::pis::get_route_codes_by_line(line)
         });
         route_codes.deserialize()
     }
