@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[doc(hidden)]
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PisGroup {
     pub name: String,                       // NAME
     pub stations: Vec<PisStation>,          // STNS
@@ -67,7 +67,7 @@ impl PisGroup {
 }
 
 /// Datensatz für eine Station im PIS.
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PisStation {
     /// Mit der ID wird die Station mit der Map verknüpft (auch dort gibt es eine ID für jede Station).
     /// Dies ist u.A. für die Fahrgäste und die öffentlichen KI-Fahrzeuge notwendig.
@@ -87,7 +87,7 @@ pub struct PisStation {
 }
 
 /// Datensatz für ein Sonderzeichen im PIS.
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PisSpecialChar {
     /// Der Code ist die Zahl, mit der das Sonderzeichen innerhalb des PIS identifiziert wird.
     pub code: u32,
@@ -103,7 +103,7 @@ pub struct PisSpecialChar {
 
 /// Datensatz für eine Route im PIS. Jeder Datensatz wird über eine
 /// Liniennummer und einen Code innerhalb der Linie identifiziert.
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PisRoute {
     /// Liniennummer und Code innerhalb der Linie zur Zuordnung
     pub line_code: (u32, u32),
@@ -125,7 +125,7 @@ pub struct PisRoute {
     pub following_line_code: Option<(u32, u32)>,
 }
 
-#[derive(Default, Clone, Serialize, Deserialize)]
+#[derive(Default, Clone, Serialize, Deserialize, Debug)]
 pub struct PisRouteTerminus {
     /// Index of the stop of the route, from which this terminus applies    
     pub stop_index: usize,
