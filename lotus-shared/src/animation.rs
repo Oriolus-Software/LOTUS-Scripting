@@ -32,6 +32,62 @@ pub struct AccelerationVelocity {
 }
 
 impl AccelerationVelocity {
+    /// Builds axle-local kinematics in LOTUS coordinates (X = lateral, Y = longitudinal, Z = vertical)
+    /// and rotates them into the global simulation frame.
+    pub fn from_rail_axle_local(
+        longitudinal_velocity: f32,
+        longitudinal_acceleration: f32,
+        inv_radius: f32,
+        elevation_derivation: f32,
+        elevation_second_derivation: f32,
+        axle_rotation: glam::Quat,
+    ) -> Self {
+        let v = longitudinal_velocity;
+        let a_long = longitudinal_acceleration;
+        let lateral_acceleration = v * v * inv_radius;
+        let vertical_acceleration =
+            elevation_second_derivation * v * v + elevation_derivation * a_long;
+
+        let local = Self {
+            linear_velocity: Vec3::new(0.0, v, elevation_derivation * v),
+            linear_acceleration: Vec3::new(lateral_acceleration, a_long, vertical_acceleration),
+            angular_velocity: Vec3::new(0.0, 0.0, v * inv_radius),
+            angular_acceleration: Vec3::new(0.0, 0.0, a_long * inv_radius),
+        };
+
+        local.transform_axes_to_global(axle_rotation)
+    }
+
+    /// Rotates linear/angular velocity and acceleration vectors into the global frame.
+    pub fn transform_axes_to_global(self, rotation: glam::Quat) -> Self {
+        Self {
+            linear_velocity: rotation * self.linear_velocity,
+            linear_acceleration: rotation * self.linear_acceleration,
+            angular_velocity: rotation * self.angular_velocity,
+            angular_acceleration: rotation * self.angular_acceleration,
+        }
+    }
+
+    /// Rotates linear/angular velocity and acceleration vectors into a local frame.
+    pub fn transform_axes_to_local(self, rotation: glam::Quat) -> Self {
+        let inv = rotation.inverse();
+        Self {
+            linear_velocity: inv * self.linear_velocity,
+            linear_acceleration: inv * self.linear_acceleration,
+            angular_velocity: inv * self.angular_velocity,
+            angular_acceleration: inv * self.angular_acceleration,
+        }
+    }
+
+    pub fn average(self, other: Self) -> Self {
+        Self {
+            linear_velocity: 0.5 * (self.linear_velocity + other.linear_velocity),
+            linear_acceleration: 0.5 * (self.linear_acceleration + other.linear_acceleration),
+            angular_velocity: 0.5 * (self.angular_velocity + other.angular_velocity),
+            angular_acceleration: 0.5 * (self.angular_acceleration + other.angular_acceleration),
+        }
+    }
+
     pub fn relative_to_parent(
         self,
         parent: &AccelerationVelocity,
@@ -57,6 +113,25 @@ impl AccelerationVelocity {
                 + self.linear_acceleration,
         }
     }
+
+    /// Linear and angular acceleration at a fixed point `local_offset` (animation-unit local frame),
+    /// expressed in the animation-unit local frame.
+    ///
+    /// Includes Euler (`α × r`) and centripetal (`ω × (ω × r)`) contributions for rigid-body motion.
+    pub fn acceleration_at_local_point(self, local_offset: Vec3) -> LocalPointAcceleration {
+        LocalPointAcceleration {
+            linear_acceleration: self.linear_acceleration
+                + self.angular_acceleration.cross(local_offset)
+                + self.angular_velocity.cross(self.angular_velocity.cross(local_offset)),
+            angular_acceleration: self.angular_acceleration,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
+pub struct LocalPointAcceleration {
+    pub linear_acceleration: Vec3,
+    pub angular_acceleration: Vec3,
 }
 
 #[cfg(feature = "ffi")]
