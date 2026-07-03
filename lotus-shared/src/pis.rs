@@ -77,13 +77,47 @@ pub struct PisStation {
     pub code: u32,
     /// Die Strings sind die Texte, die auf den Innenanzeigen angezeigt werden. Zwei Strings gibt es
     /// z.B. für Wechselanzeigen
-    pub strings_station: [Option<String>; 2],
-    /// Diese Strings sind für die Front-Außenanzeige.
-    pub strings_front: [Option<String>; 2],
-    /// Diese Strings sind für die Seiten-Außenanzeige, wenn diese zweizeilig ist.
-    pub strings_side: [Option<String>; 2],
-    /// Dieser String ist für die Seiten-Außenanzeige, wenn diese einzeilig ist.
-    pub string_side_oneline: Option<String>,
+    pub interieur_display: [String; 2],
+    /// Die folgenden Strings sind für die Außenanzeigen.
+    pub terminus_front_option: Option<[String; 2]>,
+    pub terminus_side_option: Option<[String; 2]>,
+    pub terminus_oneline: String,
+}
+
+pub enum PisStationTerminusOneLineTo {
+    FirstLine,
+    SecondLine,
+}
+
+impl PisStation {
+    /// Liefert die (zweizeilige) Front-Außenanzeige für das Ziel.
+    /// Verfügt die Ziel-Station über keine zweizeilige Front-Außenanzeige, so wird die einzeilige
+    /// Außenanzeige um eine Leerzeile erweitert, wobei one_to_two_line die Reihenfolge dieser
+    /// Erweiterung bestimmt:
+    /// - FirstLine: Die einzeilige Zeile wird in die erste Zeile und die Leerzeile in die zweite Zeile eingefügt
+    /// - SecondLine: Die einzeilige Zeile wird in die zweite Zeile und die Leerzeile in die erste Zeile eingefügt
+    pub fn terminus_front(&self, one_to_two_line: PisStationTerminusOneLineTo) -> [String; 2] {
+        if let Some(front) = &self.terminus_front_option {
+            front.clone()
+        } else {
+            match one_to_two_line {
+                PisStationTerminusOneLineTo::FirstLine => {
+                    [self.terminus_oneline.clone(), String::new()]
+                }
+                PisStationTerminusOneLineTo::SecondLine => {
+                    [String::new(), self.terminus_oneline.clone()]
+                }
+            }
+        }
+    }
+
+    pub fn terminus_side(&self, one_to_two_line: PisStationTerminusOneLineTo) -> [String; 2] {
+        if let Some(side) = &self.terminus_side_option {
+            side.clone()
+        } else {
+            self.terminus_front(one_to_two_line)
+        }
+    }
 }
 
 /// Datensatz für ein Sonderzeichen im PIS.
