@@ -148,6 +148,8 @@ pub struct PisRoute {
     /// wenn diese Route eingestellt wird. Ob dieser Code überschrieben werden kann usw.
     /// ist abhängig vom Bordrechner.
     pub special_char_code: Option<u32>,
+    /// Sind für das Balisensystem/Anforderungen/Weichen individuelle Anmelde-Codes nötig?
+    pub routing_code: Option<u32>,
     /// Zusätzliches Textfeld, welches aber aktuell keine bestimmte Bedeutung hat.
     pub text: Option<String>,
     /// Im einfachsten Fall ist das Ziel (der Zielcode) einer Route einfach die letzte
@@ -157,6 +159,43 @@ pub struct PisRoute {
     pub termini: Vec<PisRouteTerminus>,
     /// Linie/Code für die automatisch zu wählende folgende Route
     pub following_line_code: Option<(u32, u32)>,
+}
+
+impl PisRoute {
+    pub fn new(
+        line_code: (u32, u32),
+        stop_codes: Vec<u32>,
+        special_char_code: Option<u32>,
+        routing_code: Option<u32>,
+        text: Option<String>,
+        termini: Vec<PisRouteTerminus>,
+        following_line_code: Option<(u32, u32)>,
+    ) -> Self {
+        Self {
+            line_code,
+            stop_codes,
+            special_char_code,
+            routing_code,
+            text,
+            termini,
+            following_line_code,
+        }
+    }
+    pub fn get_current_direction(&self, stop_index: usize) -> Option<PisRouteTerminus> {
+        self.termini
+            .iter()
+            .find(|terminus| stop_index >= terminus.stop_index)
+            .map(|terminus| terminus.clone())
+            .or_else(|| {
+                self.stop_codes.last().map(|code| PisRouteTerminus {
+                    stop_index: 0,
+                    code: Some(*code),
+                    line: Some(self.line_code.0),
+                    special_char_code: self.special_char_code,
+                    routing_code: self.routing_code,
+                })
+            })
+    }
 }
 
 #[derive(Default, Clone, Serialize, Deserialize, Debug)]
@@ -169,4 +208,16 @@ pub struct PisRouteTerminus {
     pub line: Option<u32>,
     /// New special char code
     pub special_char_code: Option<u32>,
+    /// New routing code
+    pub routing_code: Option<u32>,
+}
+
+impl PisRouteTerminus {
+    fn routing_code_hash(&self) -> u32 {
+        0
+    }
+
+    pub fn routing_code(&self) -> u32 {
+        self.routing_code.unwrap_or(self.routing_code_hash())
+    }
 }
