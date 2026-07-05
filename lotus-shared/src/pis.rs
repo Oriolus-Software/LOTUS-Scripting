@@ -185,7 +185,7 @@ impl PisRoute {
         self.termini
             .iter()
             .find(|terminus| stop_index >= terminus.stop_index)
-            .map(|terminus| terminus.clone())
+            .cloned()
             .or_else(|| {
                 self.stop_codes.last().map(|code| PisRouteTerminus {
                     stop_index: 0,
