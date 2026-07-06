@@ -187,7 +187,7 @@ impl PisRoute {
         self.termini
             .iter()
             .find(|terminus| stop_index >= terminus.stop_index)
-            .map(|terminus| terminus.clone())
+            .cloned()
             .or_else(|| {
                 self.stop_codes.last().map(|code| PisRouteTerminus {
                     stop_index: 0,
@@ -251,7 +251,7 @@ impl PisSpGroup {
     /// Liefert die ContentId der PISS-Gruppe, die zur aktiven PISG passt und die gegebene Klasse hat.
     #[cfg(feature = "ffi")]
     pub fn get_content_id(class: &str) -> Option<ContentId> {
-        let class = lotus_script_sys::FfiObject::new(class);
+        let class = lotus_script_sys::FfiObject::new(&class);
         let content_id = lotus_script_sys::FfiObject::from_packed(unsafe {
             lotus_script_sys::pis::get_sp_content_id(class.packed())
         });
