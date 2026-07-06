@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::content::ContentId;
+
 #[doc(hidden)]
 #[derive(Clone, Debug)]
 pub struct PisGroup {
@@ -219,5 +221,70 @@ impl PisRouteTerminus {
 
     pub fn routing_code(&self) -> u32 {
         self.routing_code.unwrap_or(self.routing_code_hash())
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PisSpGroup {
+    pub name: String,
+    pub basic_pis_group: ContentId,
+    pub class: String,
+    pub add_lines: String,
+    pub add_lines_stations: Vec<PisSpAddLines>,
+    pub routes: Vec<PisSpRoute>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PisSpAddLines {
+    pub code: i32,
+    pub lines: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PisSpRoute {
+    pub code: i32,
+    pub lines: String,
+    pub stop_lines: Vec<String>,
+}
+
+impl PisSpGroup {
+    /// Liefert die ContentId der PISS-Gruppe, die zur aktiven PISG passt und die gegebene Klasse hat.
+    #[cfg(feature = "ffi")]
+    pub fn get_content_id(class: &str) -> Option<ContentId> {
+        let class = lotus_script_sys::FfiObject::new(class);
+        let content_id = lotus_script_sys::FfiObject::from_packed(unsafe {
+            lotus_script_sys::pis::get_sp_content_id(class.packed())
+        });
+        content_id.deserialize()
+    }
+
+    /// Liefert die zusätzlichen Linien aus der gegebenen PISS-Gruppe.
+    #[cfg(feature = "ffi")]
+    pub fn get_add_lines(content_id: ContentId) -> String {
+        let content_id = lotus_script_sys::FfiObject::new(&content_id);
+        let lines = lotus_script_sys::FfiObject::from_packed(unsafe {
+            lotus_script_sys::pis::get_sp_add_lines(content_id.packed())
+        });
+        lines.deserialize()
+    }
+
+    /// Liefert die zusätzlichen Linien für eine Station aus der gegebenen PISS-Gruppe.
+    #[cfg(feature = "ffi")]
+    pub fn get_add_lines_station(content_id: ContentId, station_code: u32) -> Option<String> {
+        let content_id = lotus_script_sys::FfiObject::new(&content_id);
+        let lines = lotus_script_sys::FfiObject::from_packed(unsafe {
+            lotus_script_sys::pis::get_sp_add_lines_station(content_id.packed(), station_code)
+        });
+        lines.deserialize()
+    }
+
+    /// Liefert die Route mit dem gegebenen Code aus der gegebenen PISS-Gruppe.
+    #[cfg(feature = "ffi")]
+    pub fn get_route(content_id: ContentId, route_code: u32) -> Option<PisSpRoute> {
+        let content_id = lotus_script_sys::FfiObject::new(&content_id);
+        let route = lotus_script_sys::FfiObject::from_packed(unsafe {
+            lotus_script_sys::pis::get_sp_route(content_id.packed(), route_code)
+        });
+        route.deserialize()
     }
 }
