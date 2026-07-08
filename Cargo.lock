@@ -830,7 +830,7 @@ dependencies = [
 
 [[package]]
 name = "lotussim-script"
-version = "0.7.3"
+version = "0.8.3"
 dependencies = [
  "lotussim-bindgen-macros",
  "lotussim-script-sys",
@@ -854,7 +854,7 @@ dependencies = [
 
 [[package]]
 name = "lotussim-shared"
-version = "0.5.1"
+version = "0.6.0"
 dependencies = [
  "bevy",
  "glam",

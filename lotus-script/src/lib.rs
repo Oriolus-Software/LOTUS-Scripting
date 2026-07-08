@@ -23,6 +23,9 @@ pub mod settings;
 pub mod time;
 pub mod var;
 pub mod vehicle;
+pub mod pis {
+    pub use lotus_shared::pis::*;
+}
 pub mod prelude {
     pub use crate::{
         action,
