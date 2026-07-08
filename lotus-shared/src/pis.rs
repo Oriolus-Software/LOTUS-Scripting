@@ -260,7 +260,7 @@ impl PisSpGroup {
 
     /// Liefert die zusätzlichen Linien aus der gegebenen PISS-Gruppe.
     #[cfg(feature = "ffi")]
-    pub fn get_add_lines(content_id: ContentId) -> String {
+    pub fn get_group_strings(content_id: ContentId) -> String {
         let content_id = lotus_script_sys::FfiObject::new(&content_id);
         let lines = lotus_script_sys::FfiObject::from_packed(unsafe {
             lotus_script_sys::pis::get_sp_group_strings(content_id.packed())
@@ -270,7 +270,7 @@ impl PisSpGroup {
 
     /// Liefert die zusätzlichen Linien für eine Station aus der gegebenen PISS-Gruppe.
     #[cfg(feature = "ffi")]
-    pub fn get_add_lines_station(content_id: ContentId, station_code: u32) -> Option<String> {
+    pub fn get_station_strings(content_id: ContentId, station_code: u32) -> Option<String> {
         let content_id = lotus_script_sys::FfiObject::new(&content_id);
         let lines = lotus_script_sys::FfiObject::from_packed(unsafe {
             lotus_script_sys::pis::get_sp_station_strings(content_id.packed(), station_code)
