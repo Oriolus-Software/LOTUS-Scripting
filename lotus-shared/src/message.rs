@@ -237,7 +237,7 @@ pub fn send_message<T: MessageType>(message: &T, targets: impl IntoMessageTarget
 }
 
 /// Represents a message target.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum MessageTarget {
     /// The script itself.
     Myself,
