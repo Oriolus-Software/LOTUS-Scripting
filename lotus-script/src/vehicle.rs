@@ -1,3 +1,4 @@
+pub use lotus_shared::pis::*;
 pub use lotus_shared::vehicle::*;
 
 /// Returns the velocity over ground, measured along the vehicle.
