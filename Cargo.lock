@@ -820,7 +820,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
 
 [[package]]
-name = "lotus-bindgen-macros"
+name = "lotussim-bindgen-macros"
 version = "0.1.1"
 dependencies = [
  "proc-macro2",
@@ -829,12 +829,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "lotus-script"
+name = "lotussim-script"
 version = "0.7.3"
 dependencies = [
- "lotus-bindgen-macros",
- "lotus-script-sys",
- "lotus-shared",
+ "lotussim-bindgen-macros",
+ "lotussim-script-sys",
+ "lotussim-shared",
  "rmp-serde",
  "serde",
  "serde_json",
@@ -843,23 +843,23 @@ dependencies = [
 ]
 
 [[package]]
-name = "lotus-script-sys"
+name = "lotussim-script-sys"
 version = "0.5.0"
 dependencies = [
- "lotus-bindgen-macros",
+ "lotussim-bindgen-macros",
  "rmp-serde",
  "serde",
  "serde_repr",
 ]
 
 [[package]]
-name = "lotus-shared"
+name = "lotussim-shared"
 version = "0.5.1"
 dependencies = [
  "bevy",
  "glam",
  "image",
- "lotus-script-sys",
+ "lotussim-script-sys",
  "serde",
  "serde_json",
  "serde_repr",

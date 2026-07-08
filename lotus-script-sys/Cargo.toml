@@ -1,9 +1,12 @@
 [package]
-name = "lotus-script-sys"
+name = "lotussim-script-sys"
 version = "0.5.0"
 edition = "2021"
 description = "FFI bindings for LOTUS-Simulator scripts."
 license = "MIT/Apache-2.0"
+
+[lib]
+name = "lotus_script_sys"
 
 [dependencies]
 lotus-bindgen-macros = { workspace = true }

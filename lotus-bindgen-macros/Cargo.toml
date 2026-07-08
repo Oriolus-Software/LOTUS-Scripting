@@ -1,11 +1,12 @@
 [package]
-name = "lotus-bindgen-macros"
+name = "lotussim-bindgen-macros"
 version = "0.1.1"
 edition = "2021"
 description = "Reserved for future use"
 license = "MIT/Apache-2.0"
 
 [lib]
+name = "lotus_bindgen_macros"
 proc-macro = true
 
 [dependencies]
