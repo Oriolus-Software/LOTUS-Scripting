@@ -58,6 +58,34 @@ impl PisGroup {
         route_codes.deserialize()
     }
 
+    /// Liefert sämtliche Stationen der aktiven PIS-Gruppe.
+    #[cfg(feature = "ffi")]
+    pub fn get_all_stations() -> Vec<PisStation> {
+        let stations = lotus_script_sys::FfiObject::from_packed(unsafe {
+            lotus_script_sys::pis::get_all_stations()
+        });
+        stations.deserialize()
+    }
+
+    /// Liefert sämtliche Routen der aktiven PIS-Gruppe.
+    #[cfg(feature = "ffi")]
+    pub fn get_all_routes() -> Vec<PisRoute> {
+        let routes = lotus_script_sys::FfiObject::from_packed(unsafe {
+            lotus_script_sys::pis::get_all_routes()
+        });
+        routes.deserialize()
+    }
+
+    /// Liefert sämtliche Sonderzeichen der aktiven PIS-Gruppe, aufgelöst für die gegebene Linie.
+    /// Jedes Tupel enthält den Sonderzeichen-Code und den aufgelösten Anzeigestring.
+    #[cfg(feature = "ffi")]
+    pub fn get_all_special_chars_with_line(line: u32) -> Vec<(u32, String)> {
+        let special_chars = lotus_script_sys::FfiObject::from_packed(unsafe {
+            lotus_script_sys::pis::get_all_special_chars_with_line(line)
+        });
+        special_chars.deserialize()
+    }
+
     /// Holt den Namen des Leitstellen-Servers.
     #[cfg(feature = "ffi")]
     pub fn get_server_name() -> Option<String> {
