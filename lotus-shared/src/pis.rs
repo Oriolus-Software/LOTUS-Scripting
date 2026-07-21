@@ -148,6 +148,10 @@ impl PisStation {
             self.terminus_front(one_to_two_line)
         }
     }
+
+    pub fn code_is_public(&self) -> bool {
+        self.code < 1_000_000
+    }
 }
 
 /// Datensatz für ein Sonderzeichen im PIS.
