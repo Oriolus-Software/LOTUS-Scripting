@@ -190,7 +190,7 @@ pub mod pis {
         pub fn get_sp_content_id(class: u64) -> u64;
         pub fn get_sp_group_strings(content_id: u64) -> u64;
         pub fn get_sp_station_strings(content_id: u64, station_code: u32) -> u64;
-        pub fn get_sp_route_data(content_id: u64, route_code: u32) -> u64;
+        pub fn get_sp_route_data(content_id: u64, line: u32, code: u32) -> u64;
     }
 }
 

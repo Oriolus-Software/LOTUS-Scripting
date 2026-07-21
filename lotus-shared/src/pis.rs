@@ -278,12 +278,12 @@ impl PisSpGroup {
         lines.deserialize()
     }
 
-    /// Liefert die Route mit dem gegebenen Code aus der gegebenen PISS-Gruppe.
+    /// Liefert die Route mit der gegebenen Linie und Code aus der gegebenen PISS-Gruppe.
     #[cfg(feature = "ffi")]
-    pub fn get_route(content_id: ContentId, route_code: u32) -> Option<PisSpRoute> {
+    pub fn get_route(content_id: ContentId, line: u32, code: u32) -> Option<PisSpRoute> {
         let content_id = lotus_script_sys::FfiObject::new(&content_id);
         let route = lotus_script_sys::FfiObject::from_packed(unsafe {
-            lotus_script_sys::pis::get_sp_route_data(content_id.packed(), route_code)
+            lotus_script_sys::pis::get_sp_route_data(content_id.packed(), line, code)
         });
         route.deserialize()
     }
