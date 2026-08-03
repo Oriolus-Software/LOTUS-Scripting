@@ -44,6 +44,16 @@ pub fn spawned_inverted_to_train() -> bool {
     unsafe { lotus_script_sys::vehicle::spawned_inverted_to_train() == 1 }
 }
 
+/// Initial spawn snapshot of one vehicle within a train composition.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct TrainVehicleConfiguration {
+    pub number: String,
+    pub reversed_to_train: bool,
+}
+
+/// Ordered list of vehicles in a train at spawn time.
+pub type TrainConfiguration = Vec<TrainVehicleConfiguration>;
+
 /// Describes an event that is sent when the train configuration is changed.
 /// Please note: When two trains with different directions are coupled,
 /// the new direction cannot be predicted!
@@ -55,6 +65,9 @@ pub struct TrainConfigurationChanged {
     pub reversed_to_train: bool,
     pub index_in_train: usize,
     pub train_vehicle_count: usize,
+    /// Full train composition at initial spawn; `None` for later updates (e.g. script reload).
+    #[serde(default)]
+    pub train_configuration: Option<TrainConfiguration>,
 }
 
 impl MessageType for TrainConfigurationChanged {

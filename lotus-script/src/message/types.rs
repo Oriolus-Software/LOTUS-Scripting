@@ -74,3 +74,7 @@ message_type!(ButtonEvent, "builtin", "button_event");
 pub struct BatterySwitch(pub bool);
 
 message_type!(BatterySwitch, "builtin", "battery_switch");
+
+pub use lotus_shared::vehicle::{
+    TrainConfiguration, TrainConfigurationChanged, TrainVehicleConfiguration,
+};
