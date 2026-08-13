@@ -34,22 +34,29 @@ pub struct AccelerationVelocity {
 impl AccelerationVelocity {
     /// Builds axle-local kinematics in LOTUS coordinates (X = lateral, Y = longitudinal, Z = vertical)
     /// and rotates them into the global simulation frame.
+    ///
+    /// `*_derivation` values are derivatives w.r.t. longitudinal path distance (same parameter as
+    /// `longitudinal_velocity`): track curvature via `inv_radius`, plus optional irregularity /
+    /// elevation slopes (`lateral_*`, `elevation_*`).
     pub fn from_rail_axle_local(
         longitudinal_velocity: f32,
         longitudinal_acceleration: f32,
         inv_radius: f32,
+        lateral_derivation: f32,
+        lateral_second_derivation: f32,
         elevation_derivation: f32,
         elevation_second_derivation: f32,
         axle_rotation: glam::Quat,
     ) -> Self {
         let v = longitudinal_velocity;
         let a_long = longitudinal_acceleration;
-        let lateral_acceleration = v * v * inv_radius;
+        let lateral_acceleration = v * v * (inv_radius + lateral_second_derivation)
+            + lateral_derivation * a_long;
         let vertical_acceleration =
             elevation_second_derivation * v * v + elevation_derivation * a_long;
 
         let local = Self {
-            linear_velocity: Vec3::new(0.0, v, elevation_derivation * v),
+            linear_velocity: Vec3::new(lateral_derivation * v, v, elevation_derivation * v),
             linear_acceleration: Vec3::new(lateral_acceleration, a_long, vertical_acceleration),
             angular_velocity: Vec3::new(0.0, 0.0, v * inv_radius),
             angular_acceleration: Vec3::new(0.0, 0.0, a_long * inv_radius),
