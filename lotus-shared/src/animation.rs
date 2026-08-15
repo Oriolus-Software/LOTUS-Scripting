@@ -50,8 +50,8 @@ impl AccelerationVelocity {
     ) -> Self {
         let v = longitudinal_velocity;
         let a_long = longitudinal_acceleration;
-        let lateral_acceleration = v * v * (inv_radius + lateral_second_derivation)
-            + lateral_derivation * a_long;
+        let lateral_acceleration =
+            v * v * (inv_radius + lateral_second_derivation) + lateral_derivation * a_long;
         let vertical_acceleration =
             elevation_second_derivation * v * v + elevation_derivation * a_long;
 
@@ -129,7 +129,9 @@ impl AccelerationVelocity {
         LocalPointAcceleration {
             linear_acceleration: self.linear_acceleration
                 + self.angular_acceleration.cross(local_offset)
-                + self.angular_velocity.cross(self.angular_velocity.cross(local_offset)),
+                + self
+                    .angular_velocity
+                    .cross(self.angular_velocity.cross(local_offset)),
             angular_acceleration: self.angular_acceleration,
         }
     }
