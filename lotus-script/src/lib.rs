@@ -1,3 +1,4 @@
+#[doc(hidden)]
 pub use lotus_bindgen_macros::lotus_bindgen;
 
 use message::Message;
@@ -8,6 +9,8 @@ pub mod content;
 pub mod event;
 pub mod font;
 pub mod gizmos;
+#[doc(hidden)]
+pub mod global_vars;
 pub mod graphics;
 pub mod input;
 pub mod log;

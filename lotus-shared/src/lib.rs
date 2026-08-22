@@ -1,3 +1,7 @@
+//! Gemeinsame Typen für LOTUS-Scripts und die Simulator-Engine.
+//!
+//! Shared types for LOTUS scripts and the simulator engine.
+
 pub mod action;
 pub mod animation;
 pub mod content;

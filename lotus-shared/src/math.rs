@@ -1,7 +1,14 @@
+//! Mathematik-Hilfen und Re-Exports von `glam`-Vektortypen.
+//!
+//! Math helpers and re-exports of `glam` vector types.
+
 use serde::{Deserialize, Serialize};
 
 pub use glam::*;
 
+/// Achsenausgerichtetes Rechteck auf einem ganzzahligen Pixelraster.
+///
+/// Axis-aligned rectangle on an integer pixel grid.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Rectangle {
     start: UVec2,
@@ -9,6 +16,9 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
+    /// Erstellt ein Rechteck aus inklusive Start- und Endecke.
+    ///
+    /// Creates a rectangle from inclusive start and end corners.
     pub fn new(start: UVec2, end: UVec2) -> Self {
         assert!(start.x <= end.x);
         assert!(start.y <= end.y);
@@ -16,30 +26,48 @@ impl Rectangle {
         Self { start, end }
     }
 
+    /// Erstellt ein Rechteck aus Startecke und Größe.
+    ///
+    /// Creates a rectangle from a start corner and a size.
     pub fn from_size(start: UVec2, size: UVec2) -> Self {
         Self::new(start, start + size)
     }
 
+    /// Gibt die inklusive Startecke zurück.
+    ///
+    /// Returns the inclusive start corner.
     #[inline(always)]
     pub fn start(&self) -> UVec2 {
         self.start
     }
 
+    /// Gibt die inklusive Endecke zurück.
+    ///
+    /// Returns the inclusive end corner.
     #[inline(always)]
     pub fn end(&self) -> UVec2 {
         self.end
     }
 
+    /// Gibt die Breite in Pixeln zurück.
+    ///
+    /// Returns the width in pixels.
     #[inline(always)]
     pub fn width(&self) -> u32 {
         self.end.x - self.start.x
     }
 
+    /// Gibt die Höhe in Pixeln zurück.
+    ///
+    /// Returns the height in pixels.
     #[inline(always)]
     pub fn height(&self) -> u32 {
         self.end.y - self.start.y
     }
 
+    /// Gibt die Größe als [`UVec2`] zurück.
+    ///
+    /// Returns the size as a [`UVec2`].
     #[inline(always)]
     pub fn size(&self) -> UVec2 {
         UVec2 {
@@ -48,6 +76,9 @@ impl Rectangle {
         }
     }
 
+    /// Gibt zurück, ob das Rechteck den Punkt enthält.
+    ///
+    /// Returns whether the rectangle contains the given point.
     #[inline]
     pub fn contains(&self, point: UVec2) -> bool {
         self.start.x <= point.x
@@ -56,6 +87,9 @@ impl Rectangle {
             && point.y <= self.end.y
     }
 
+    /// Gibt zurück, ob sich dieses Rechteck mit einem anderen schneidet.
+    ///
+    /// Returns whether this rectangle intersects another.
     #[inline]
     pub fn intersects(&self, other: &Rectangle) -> bool {
         self.start.x <= other.end.x

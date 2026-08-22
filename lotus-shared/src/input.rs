@@ -1,27 +1,45 @@
+//! Tastatur-Eingabetypen für registrierte Aktionen.
+//!
+//! Keyboard input types for registered actions.
+
 use glam::Vec2;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
+/// Art des Aktionszustands.
+///
 /// The state kind of an action.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ActionStateKind {
+    /// Die Aktion wird nicht ausgeführt.
+    ///
     /// The action is not being performed.
     None,
+    /// Die Aktion wurde gerade gedrückt.
+    ///
     /// The action has just been pressed.
     JustPressed,
+    /// Die Aktion ist aktuell gedrückt.
+    ///
     /// The action is currently pressed.
     Pressed,
+    /// Die Aktion wurde gerade losgelassen.
+    ///
     /// The action has just been released.
     JustReleased,
 }
 
 impl ActionStateKind {
+    /// Gibt `true` zurück, wenn die Aktion gerade gedrückt wurde.
+    ///
     /// Returns `true` if the action has just been pressed.
     pub fn is_just_pressed(self) -> bool {
         matches!(self, ActionStateKind::JustPressed)
     }
 
+    /// Gibt `true` zurück, wenn die Aktion aktuell gedrückt ist.
+    ///
     /// Returns `true` if the action is currently pressed.
     pub fn is_pressed(self) -> bool {
         matches!(
@@ -30,27 +48,45 @@ impl ActionStateKind {
         )
     }
 
+    /// Gibt `true` zurück, wenn die Aktion gerade losgelassen wurde.
+    ///
     /// Returns `true` if the action has just been released.
     pub fn is_just_released(self) -> bool {
         matches!(self, ActionStateKind::JustReleased)
     }
 
+    /// Gibt `true` zurück, wenn die Aktion aktuell nicht gedrückt ist.
+    ///
     /// Returns `true` if the action is currently released.
     pub fn is_released(self) -> bool {
         matches!(self, ActionStateKind::JustReleased | ActionStateKind::None)
     }
 }
 
+/// Zustand einer Aktion.
+///
 /// The state of an action.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct ActionState {
+    /// Drück- bzw. Loslasszustand der Aktion.
+    ///
+    /// Pressed/released state of the action.
     pub kind: ActionStateKind,
+    /// Cockpit-Index, wenn die Aktion aus einem bestimmten Cockpit stammt.
+    ///
+    /// Cockpit index when the action originates from a specific cockpit.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cockpit_index: Option<u8>,
+    /// Optionale UV-Koordinaten für mausbasierte Aktionen.
+    ///
+    /// Optional UV coordinates for mouse-based actions.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub uv: Option<Vec2>,
 }
 
+/// Unterstützte Tastencodes für Standard-Aktionsbelegungen.
+///
+/// Keyboard key codes supported as default action bindings.
 macro_rules! key_code_struct {
     ($($key:ident),*) => {
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]

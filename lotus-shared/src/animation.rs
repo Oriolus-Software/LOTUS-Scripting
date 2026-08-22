@@ -1,3 +1,7 @@
+//! Animations-Kinematik und Handles für scriptseitig zugreifbare Animationen.
+//!
+//! Animation kinematics and handles for script-accessible animations.
+
 #[cfg(feature = "bevy")]
 use bevy::prelude::Component;
 use glam::Vec3;
@@ -5,10 +9,19 @@ use glam::Vec3;
 use lotus_script_sys::FfiObject;
 use serde::{Deserialize, Serialize};
 
+/// Fehler beim Auflösen oder Abfragen von Animationen.
+///
+/// Errors returned when resolving or querying animations.
 #[derive(Debug, thiserror::Error)]
 pub enum AnimationError {
+    /// Die angeforderte Animation wurde nicht gefunden.
+    ///
+    /// The requested animation was not found.
     #[error("animation not found")]
     AnimationNotFound = 65536,
+    /// Ein unbekannter Animationsfehler ist aufgetreten.
+    ///
+    /// An unknown animation error occurred.
     #[error("unknown error")]
     Unknown = 0,
 }
@@ -22,16 +35,38 @@ impl From<u32> for AnimationError {
     }
 }
 
+/// Lineare und Winkelgeschwindigkeit sowie -beschleunigung im globalen Simulationskoordinatensystem.
+///
+/// Linear and angular velocity and acceleration in the global simulation frame.
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
 #[cfg_attr(feature = "bevy", derive(Component))]
 pub struct AccelerationVelocity {
+    /// Lineare Geschwindigkeit in m/s.
+    ///
+    /// Linear velocity in m/s.
     pub linear_velocity: Vec3,
+    /// Lineare Beschleunigung in m/s².
+    ///
+    /// Linear acceleration in m/s².
     pub linear_acceleration: Vec3,
+    /// Winkelgeschwindigkeit in rad/s.
+    ///
+    /// Angular velocity in rad/s.
     pub angular_velocity: Vec3,
+    /// Winkelbeschleunigung in rad/s².
+    ///
+    /// Angular acceleration in rad/s².
     pub angular_acceleration: Vec3,
 }
 
 impl AccelerationVelocity {
+    /// Erstellt achslokale Kinematik in LOTUS-Koordinaten (X = quer, Y = längs, Z = vertikal)
+    /// und rotiert sie ins globale Simulationskoordinatensystem.
+    ///
+    /// `*_derivation`-Werte sind Ableitungen bzgl. der Längswegstrecke (gleicher Parameter wie
+    /// `longitudinal_velocity`): Gleiskrümmung über `inv_radius` plus optionale Unregelmäßigkeiten /
+    /// Höhenneigungen (`lateral_*`, `elevation_*`).
+    ///
     /// Builds axle-local kinematics in LOTUS coordinates (X = lateral, Y = longitudinal, Z = vertical)
     /// and rotates them into the global simulation frame.
     ///
@@ -65,6 +100,8 @@ impl AccelerationVelocity {
         local.transform_axes_to_global(axle_rotation)
     }
 
+    /// Rotiert Geschwindigkeits- und Beschleunigungsvektoren ins globale Koordinatensystem.
+    ///
     /// Rotates linear/angular velocity and acceleration vectors into the global frame.
     pub fn transform_axes_to_global(self, rotation: glam::Quat) -> Self {
         Self {
@@ -75,6 +112,8 @@ impl AccelerationVelocity {
         }
     }
 
+    /// Rotiert Geschwindigkeits- und Beschleunigungsvektoren ins lokale Koordinatensystem.
+    ///
     /// Rotates linear/angular velocity and acceleration vectors into a local frame.
     pub fn transform_axes_to_local(self, rotation: glam::Quat) -> Self {
         let inv = rotation.inverse();
@@ -86,6 +125,9 @@ impl AccelerationVelocity {
         }
     }
 
+    /// Gibt den komponentenweisen Mittelwert zweier kinematischer Zustände zurück.
+    ///
+    /// Returns the component-wise average of two kinematic states.
     pub fn average(self, other: Self) -> Self {
         Self {
             linear_velocity: 0.5 * (self.linear_velocity + other.linear_velocity),
@@ -95,6 +137,9 @@ impl AccelerationVelocity {
         }
     }
 
+    /// Kombiniert diesen lokalen kinematischen Zustand mit einem übergeordneten starren Körper.
+    ///
+    /// Combines this local kinematic state with a parent rigid body.
     pub fn relative_to_parent(
         self,
         parent: &AccelerationVelocity,
@@ -121,6 +166,11 @@ impl AccelerationVelocity {
         }
     }
 
+    /// Lineare und Winkelbeschleunigung an einem festen Punkt `local_offset` (lokales Koordinatensystem der Animationseinheit),
+    /// ausgedrückt im lokalen Koordinatensystem der Animationseinheit.
+    ///
+    /// Enthält Euler- (`α × r`) und Zentripetal- (`ω × (ω × r)`) Anteile für starre Körperbewegung.
+    ///
     /// Linear and angular acceleration at a fixed point `local_offset` (animation-unit local frame),
     /// expressed in the animation-unit local frame.
     ///
@@ -137,12 +187,24 @@ impl AccelerationVelocity {
     }
 }
 
+/// Lineare und Winkelbeschleunigung an einem Punkt einer Animationseinheit.
+///
+/// Linear and angular acceleration at a point on an animation unit.
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
 pub struct LocalPointAcceleration {
+    /// Lineare Beschleunigung am Punkt in m/s².
+    ///
+    /// Linear acceleration at the point in m/s².
     pub linear_acceleration: Vec3,
+    /// Winkelbeschleunigung am Punkt in rad/s².
+    ///
+    /// Angular acceleration at the point in rad/s².
     pub angular_acceleration: Vec3,
 }
 
+/// Handle auf eine benannte Animation am aktuellen Objekt.
+///
+/// Handle to a named animation on the current object.
 #[cfg(feature = "ffi")]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct Animation {
@@ -151,10 +213,16 @@ pub struct Animation {
 
 #[cfg(feature = "ffi")]
 impl Animation {
+    /// Gibt den internen Animationsindex zurück.
+    ///
+    /// Returns the internal animation index.
     pub fn index(&self) -> usize {
         self.index
     }
 
+    /// Sucht eine Animation anhand ihres Namens am aktuellen Objekt.
+    ///
+    /// Looks up an animation by name on the current object.
     pub fn get(name: &str) -> Result<Self, AnimationError> {
         let name = FfiObject::new(&name);
 
@@ -166,6 +234,9 @@ impl Animation {
         }
     }
 
+    /// Gibt den globalen kinematischen Zustand dieser Animationseinheit zurück.
+    ///
+    /// Returns the global kinematic state of this animation unit.
     pub fn get_animation_global_acceleration_velocity(self) -> AccelerationVelocity {
         let state = unsafe {
             lotus_script_sys::animation::get_animation_global_acceleration_velocity(

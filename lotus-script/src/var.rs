@@ -8,6 +8,7 @@ pub trait VariableType {
     fn set_var(name: &str, var: Self);
 }
 
+#[doc(hidden)]
 pub enum Persistence {
     Session,
     Permanent,

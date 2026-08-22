@@ -1,3 +1,24 @@
+/// Registers a LOTUS script type and exports the WASM entry points.
+///
+/// Expands to `init`, `register_actions`, `tick`, and `late_tick` functions that
+/// delegate to the [`Script`] implementation on the given type. Incoming engine
+/// messages are delivered in `late_tick` via [`Script::on_message`].
+///
+/// # Example
+///
+/// ```no_run
+/// use lotus_script::{script, Script};
+///
+/// struct MyScript;
+///
+/// impl Script for MyScript {
+///     fn tick(&mut self) {
+///         // ...
+///     }
+/// }
+///
+/// script!(MyScript);
+/// ```
 #[macro_export]
 macro_rules! script {
     ($t:ident) => {

@@ -1,3 +1,4 @@
+#[doc(hidden)]
 pub struct GlobalVar<T> {
     name: &'static str,
     _phantom: std::marker::PhantomData<T>,
@@ -10,6 +11,7 @@ struct GlobalVarDef {
     kind: &'static str,
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! globals_vars {
     ($($name:ident: $ty:ty),*) => {
