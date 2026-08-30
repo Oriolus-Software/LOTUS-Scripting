@@ -73,6 +73,7 @@ impl AccelerationVelocity {
     /// `*_derivation` values are derivatives w.r.t. longitudinal path distance (same parameter as
     /// `longitudinal_velocity`): track curvature via `inv_radius`, plus optional irregularity /
     /// elevation slopes (`lateral_*`, `elevation_*`).
+    #[allow(clippy::too_many_arguments)]
     pub fn from_rail_axle_local(
         longitudinal_velocity: f32,
         longitudinal_acceleration: f32,
