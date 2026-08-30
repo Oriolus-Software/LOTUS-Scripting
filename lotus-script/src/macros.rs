@@ -1,8 +1,13 @@
+/// Registriert einen LOTUS-Script-Typ und exportiert die WASM-Einstiegspunkte.
+///
 /// Registers a LOTUS script type and exports the WASM entry points.
 ///
+/// Expandiert zu `init`, `register_actions`, `tick` und `late_tick`, die an die [`crate::Script`]-Implementierung
+/// des angegebenen Typs delegieren. Eingehende Engine-Nachrichten werden in `late_tick` über [`crate::Script::on_message`] zugestellt.
+///
 /// Expands to `init`, `register_actions`, `tick`, and `late_tick` functions that
-/// delegate to the [`Script`] implementation on the given type. Incoming engine
-/// messages are delivered in `late_tick` via [`Script::on_message`].
+/// delegate to the [`crate::Script`] implementation on the given type. Incoming engine
+/// messages are delivered in `late_tick` via [`crate::Script::on_message`].
 ///
 /// # Example
 ///

@@ -1,24 +1,37 @@
+//! Fahrzeugphysik und Zugbildung (Re-Export aus `lotus_shared` plus Script-Funktionen).
+//!
+//! Vehicle physics and train composition (re-exported from `lotus_shared` plus script functions).
+
 pub use lotus_shared::vehicle::*;
 
-/// Returns the velocity over ground, measured along the vehicle.
-/// Any spinning wheels etc. are therefore not taken into account.
+/// Gibt die Geschwindigkeit über Grund entlang der Fahrzeuglängsachse in m/s zurück.
+/// Schlupfende Räder werden nicht berücksichtigt.
+///
+/// Returns velocity over ground along the vehicle in m/s.
+/// Spinning wheels are not taken into account.
 pub fn velocity_vs_ground() -> f32 {
     unsafe { lotus_script_sys::vehicle::velocity_vs_ground() }
 }
 
-/// Returns the acceleration over ground, measured along the vehicle.
-/// Any spinning wheels etc. are therefore not taken into account.
+/// Gibt die Beschleunigung über Grund entlang der Fahrzeuglängsachse in m/s² zurück.
+/// Schlupfende Räder werden nicht berücksichtigt.
+///
+/// Returns acceleration over ground along the vehicle in m/s².
+/// Spinning wheels are not taken into account.
 pub fn acceleration_vs_ground() -> f32 {
     unsafe { lotus_script_sys::vehicle::acceleration_vs_ground() }
 }
 
-/// If it is a road vehicle, you can set the steering force of the first axle with this function.
-/// The unit is degrees.
+/// Setzt die Lenkkraft der ersten Achse bei Straßenfahrzeugen in Grad.
+///
+/// Sets the steering force of the first axle for road vehicles, in degrees.
 pub fn set_road_steering_force(force: f32) {
     unsafe { lotus_script_sys::vehicle::set_road_steering_force(force) }
 }
 
-/// If it is a road vehicle, you can manipulate steering stiffness and damping with this function.
+/// Manipuliert Federsteifigkeit und Dämpfung der Straßenlenkung.
+///
+/// Manipulates steering spring stiffness and damping for road vehicles.
 pub fn set_road_steering_spring_damper_manipulation(values: RoadSteeringSpringDamperManipulator) {
     unsafe {
         lotus_script_sys::vehicle::set_road_steering_spring_damper_manipulation(

@@ -329,7 +329,8 @@ impl PisRoute {
     pub fn get_current_direction(&self, stop_index: usize) -> Option<PisRouteTerminus> {
         self.termini
             .iter()
-            .find(|terminus| stop_index >= terminus.stop_index)
+            .filter(|terminus| stop_index >= terminus.stop_index)
+            .max_by_key(|terminus| terminus.stop_index)
             .cloned()
             .or_else(|| {
                 self.stop_codes.last().map(|code| PisRouteTerminus {

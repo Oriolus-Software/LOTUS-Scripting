@@ -1,8 +1,16 @@
+//! Abfrage registrierter Eingabeaktionen.
+//!
+//! Query registered input actions.
+
 use lotus_script_sys::FfiObject;
 pub use lotus_shared::action::*;
 use lotus_shared::input::ActionState;
 
-/// Get the current state of an action. If the action is not registered, it will return `ActionState::None`.
+/// Gibt den aktuellen Zustand einer Aktion zurück.
+/// Nicht registrierte Aktionen liefern [`crate::input::ActionStateKind::None`].
+///
+/// Returns the current state of an action.
+/// Unregistered actions return [`crate::input::ActionStateKind::None`].
 pub fn state(action: &str) -> ActionState {
     let action = FfiObject::new(&action);
     let state = unsafe { lotus_script_sys::action::state(action.packed()) };

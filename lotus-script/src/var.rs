@@ -1,10 +1,26 @@
+//! Lesen und Schreiben von Script-Variablen.
+//!
+//! Reading and writing script variables.
+
 use lotus_script_sys::{FfiObject, FromFfi};
 use lotus_shared::content::ContentId;
 
+/// Typ, der an Script-Variablen gebunden werden kann.
+///
+/// Type that can be bound to script variables.
 pub trait VariableType {
+    /// Rückgabetyp beim Lesen der Variable.
+    ///
+    /// Return type when reading the variable.
     type Output;
 
+    /// Liest die Variable mit dem angegebenen Namen.
+    ///
+    /// Reads the variable with the given name.
     fn get_var(name: &str) -> Self::Output;
+    /// Schreibt die Variable mit dem angegebenen Namen.
+    ///
+    /// Writes the variable with the given name.
     fn set_var(name: &str, var: Self);
 }
 
@@ -115,12 +131,18 @@ impl VariableType for ContentId {
     }
 }
 
+/// Typisierte Referenz auf eine Script-Variable nach Namen.
+///
+/// Typed reference to a script variable by name.
 pub struct Variable<T> {
     name: String,
     _phantom: std::marker::PhantomData<T>,
 }
 
 impl<T> Variable<T> {
+    /// Erstellt eine Variable-Referenz für den angegebenen Namen.
+    ///
+    /// Creates a variable reference for the given name.
     pub fn new(name: &str) -> Self {
         Self {
             name: name.to_string(),
@@ -130,19 +152,31 @@ impl<T> Variable<T> {
 }
 
 impl<T: VariableType> Variable<T> {
+    /// Liest den aktuellen Wert der Variable.
+    ///
+    /// Reads the current value of the variable.
     pub fn get(&self) -> T::Output {
         T::get_var(&self.name)
     }
 
+    /// Schreibt einen neuen Wert in die Variable.
+    ///
+    /// Writes a new value to the variable.
     pub fn set(&self, value: T) {
         T::set_var(&self.name, value);
     }
 }
 
+/// Liest eine Script-Variable nach Namen.
+///
+/// Reads a script variable by name.
 pub fn get_var<T: VariableType>(name: &str) -> T::Output {
     T::get_var(name)
 }
 
+/// Schreibt eine Script-Variable nach Namen.
+///
+/// Writes a script variable by name.
 pub fn set_var<T: VariableType>(name: &str, var: T) {
     T::set_var(name, var);
 }

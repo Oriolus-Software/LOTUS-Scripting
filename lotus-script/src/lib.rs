@@ -1,3 +1,7 @@
+//! High-Level-API für LOTUS-Simulator-Scripts (WebAssembly).
+//!
+//! High-level API for LOTUS simulator scripts (WebAssembly).
+
 #[doc(hidden)]
 pub use lotus_bindgen_macros::lotus_bindgen;
 
@@ -26,9 +30,16 @@ pub mod settings;
 pub mod time;
 pub mod var;
 pub mod vehicle;
+/// PIS-Daten und Abfragefunktionen (Re-Export aus `lotus_shared`).
+///
+/// PIS data and query functions (re-exported from `lotus_shared`).
 pub mod pis {
     pub use lotus_shared::pis::*;
 }
+
+/// Häufig genutzte Typen und Makros für Script-Implementierungen.
+///
+/// Commonly used types and macros for script implementations.
 pub mod prelude {
     pub use crate::{
         action,
@@ -42,24 +53,37 @@ pub mod prelude {
 }
 pub use lotus_shared::animation::*;
 
+/// Haupt-Trait für LOTUS-Script-Implementierungen.
+///
+/// Main trait for LOTUS script implementations.
 pub trait Script {
-    /// Initialize the script.
+    /// Wird einmal beim Laden des Scripts aufgerufen.
+    ///
+    /// Called once when the script is loaded.
     fn init(&mut self) {}
 
-    /// Register actions.
+    /// Registriert Eingabeaktionen; Standard: leere Liste.
+    ///
+    /// Registers input actions; defaults to an empty list.
     fn actions() -> Vec<action::RegisterAction> {
         Default::default()
     }
 
-    /// Tick the script.
+    /// Wird pro Simulations-Tick aufgerufen.
+    ///
+    /// Called once per simulation tick.
     fn tick(&mut self) {}
 
-    /// Handle a message.
+    /// Verarbeitet eine eingehende Nachricht.
+    ///
+    /// Handles an incoming message.
     #[allow(unused_variables)]
     fn on_message(&mut self, msg: Message) {}
 }
 
-/// Returns true if the object the script is attached to is remote controlled.
+/// Gibt `true` zurück, wenn das scriptbehaftete Objekt ferngesteuert ist.
+///
+/// Returns `true` if the object the script is attached to is remote controlled.
 pub fn is_rc() -> bool {
     unsafe { lotus_script_sys::env::is_rc() }
 }
