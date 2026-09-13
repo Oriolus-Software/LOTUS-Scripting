@@ -302,7 +302,7 @@ where
 /// // Send a message with only a single target
 /// send_message(&TestMessage { value: 42 }, MessageTarget::Myself);
 /// // Send a message to multiple targets
-/// send_message(&TestMessage { value: 42 }, [MessageTarget::Myself, MessageTarget::ChildByIndex(0)]);
+/// send_message(&TestMessage { value: 42 }, [MessageTarget::Myself, MessageTarget::ModuleSlot(0)]);
 /// ```
 #[cfg(feature = "ffi")]
 pub fn send_message<T: MessageType>(message: &T, targets: impl IntoMessageTargets) {
@@ -326,10 +326,16 @@ pub enum MessageTarget {
     ///
     /// The script itself.
     Myself,
-    /// Das Child-Script am angegebenen Index.
+    /// Das Child-Script am angegebenen Index in der Child-Script-Liste.
     ///
-    /// The child script at the given index.
+    /// The child script at the given index in the child-script list.
+    #[deprecated(note = "use `MessageTarget::ModuleSlot` for vehicle module slots")]
+    #[doc(hidden)]
     ChildByIndex(usize),
+    /// Das Modul im Fahrzeug-Modulslot mit dem angegebenen Index (`module_slot_index`).
+    ///
+    /// The module in the vehicle module slot with the given index (`module_slot_index`).
+    ModuleSlot(usize),
     /// An alle Module im Cockpit mit dem angegebenen Index.
     ///
     /// To all modules in the cockpit with the given index.
