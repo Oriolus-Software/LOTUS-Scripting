@@ -1,6 +1,6 @@
 [package]
 name = "lotussim-script"
-version = "0.8.4"
+version = "0.8.5"
 description = "A library for creating LOTUS-Simulator scripts."
 documentation = "https://docs.rs/lotussim-script"
 edition.workspace = true
