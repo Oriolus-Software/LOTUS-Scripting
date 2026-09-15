@@ -1,6 +1,6 @@
-//! Fahrzeugphysik und Zugbildung (Re-Export aus `lotus_shared` plus Script-Funktionen).
+//! Fahrzeugphysik und Zugbildung.
 //!
-//! Vehicle physics and train composition (re-exported from `lotus_shared` plus script functions).
+//! Vehicle physics and train composition.
 
 pub use lotus_shared::vehicle::*;
 

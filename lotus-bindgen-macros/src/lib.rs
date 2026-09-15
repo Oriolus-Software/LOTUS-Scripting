@@ -1,6 +1,19 @@
+//! Proc-Macros für LOTUS-Simulator-Scripts.
+//!
+//! Proc-macros for LOTUS simulator scripts.
+//!
+//! Für Addon-Scripts bitte [`lotussim-script`](https://docs.rs/lotussim-script) verwenden,
+//! nicht diese Crate direkt einbinden.
+//!
+//! For addon scripts, depend on [`lotussim-script`](https://docs.rs/lotussim-script)
+//! instead of using this crate directly.
+
 use proc_macro::TokenStream;
 use quote::quote;
 
+/// Internes Bindgen-Attribut für FFI-Funktionen.
+///
+/// Internal bindgen attribute for FFI functions.
 #[proc_macro_attribute]
 pub fn lotus_bindgen(_attr: TokenStream, item: TokenStream) -> TokenStream {
     if let Ok(input) = syn::parse::<syn::ForeignItemFn>(item.clone()) {

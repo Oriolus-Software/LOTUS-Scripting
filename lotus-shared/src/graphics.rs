@@ -204,7 +204,6 @@ pub mod textures {
     #[serde(transparent)]
     pub struct TextureHandle(u32);
 
-    #[cfg(feature = "internal")]
     impl TextureHandle {
         /// Erstellt einen neuen Textur-Handle.
         ///

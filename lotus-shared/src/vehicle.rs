@@ -12,20 +12,44 @@ use crate::message::{Coupling, MessageMeta, MessageType};
 /// Errors returned when resolving vehicle components.
 #[derive(Debug, thiserror::Error)]
 pub enum VehicleError {
+    /// Das Fahrzeug wurde nicht gefunden.
+    ///
+    /// The vehicle was not found.
     #[error("vehicle not found")]
     VehicleNotFound = 256,
+    /// Das Drehgestell wurde nicht gefunden.
+    ///
+    /// The bogie was not found.
     #[error("bogie not found")]
     BogieNotFound = 512,
+    /// Die Achse wurde nicht gefunden.
+    ///
+    /// The axle was not found.
     #[error("axle not found")]
     AxleNotFound = 1024,
+    /// Die Kupplung wurde nicht gefunden.
+    ///
+    /// The coupling was not found.
     #[error("coupling not found")]
     CouplingNotFound = 2048,
+    /// Der Stromabnehmer wurde nicht gefunden.
+    ///
+    /// The pantograph was not found.
     #[error("pantograph not found")]
     PantographNotFound = 4096,
+    /// Die Straßenachse wurde nicht gefunden.
+    ///
+    /// The road axle was not found.
     #[error("road axle not found")]
     RoadAxleNotFound = 8192,
+    /// Das Straßenrad wurde nicht gefunden.
+    ///
+    /// The road wheel was not found.
     #[error("road wheel not found")]
     RoadWheelNotFound = 16384,
+    /// Ein unbekannter Fehler ist aufgetreten.
+    ///
+    /// An unknown error occurred.
     #[error("unknown error")]
     Unknown = 0,
 }

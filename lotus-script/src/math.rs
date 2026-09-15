@@ -1,6 +1,6 @@
-//! Mathematik-Hilfen und Re-Exports aus `lotus_shared`.
+//! Mathematik-Hilfen und Vektortypen.
 //!
-//! Math helpers and re-exports from `lotus_shared`.
+//! Math helpers and vector types.
 
 use crate::time::{delta, delta_f64};
 

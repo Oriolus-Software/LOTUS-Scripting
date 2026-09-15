@@ -1,6 +1,52 @@
 //! High-Level-API für LOTUS-Simulator-Scripts (WebAssembly).
 //!
 //! High-level API for LOTUS simulator scripts (WebAssembly).
+//!
+//! # Einstieg / Getting started
+//!
+//! Als Script-Autor reicht die Abhängigkeit `lotussim-script`. Im Rust-Code heißt das Crate
+//! `lotus_script`.
+//!
+//! As a script author, depend only on `lotussim-script`. In Rust code the crate is named
+//! `lotus_script`.
+//!
+//! ```toml
+//! [dependencies]
+//! lotussim-script = "0.8"
+//! ```
+//!
+//! Scripts werden nach `wasm32-unknown-unknown` gebaut und laufen in der LOTUS-Scriptengine.
+//! Der mit [`script!`] registrierte Typ muss [`Default`] implementieren.
+//!
+//! Scripts are compiled for `wasm32-unknown-unknown` and run inside the LOTUS script engine.
+//! The type registered with [`script!`] must implement [`Default`].
+//!
+//! ```no_run
+//! # #[cfg(target_arch = "wasm32")]
+//! # {
+//! use lotus_script::prelude::*;
+//!
+//! #[derive(Default)]
+//! struct MyScript;
+//!
+//! impl Script for MyScript {
+//!     fn tick(&mut self) {}
+//! }
+//!
+//! script!(MyScript);
+//! # }
+//! ```
+//!
+//! # Hilfe / Help
+//!
+//! - Offline-Hilfe im LOTUS-Simulator / in-game offline help of the LOTUS simulator
+//! - [LOTUS-Forum](https://www.lotus-simulator.de/forum/)
+//! - Repository-README / repository README
+//!
+//! # Features
+//!
+//! - `time`: zusätzliche Zeitumrechnungen über die `time`-Crate / extra time conversions via the `time` crate
+//! - `internal`: Schnittstellen für die Simulator-Engine, nicht für Addon-Scripts / APIs for the simulator engine, not for addon scripts
 
 #[doc(hidden)]
 pub use lotus_bindgen_macros::lotus_bindgen;
@@ -30,9 +76,9 @@ pub mod settings;
 pub mod time;
 pub mod var;
 pub mod vehicle;
-/// PIS-Daten und Abfragefunktionen (Re-Export aus `lotus_shared`).
+/// PIS-Daten und Abfragefunktionen.
 ///
-/// PIS data and query functions (re-exported from `lotus_shared`).
+/// PIS data and query functions.
 pub mod pis {
     pub use lotus_shared::pis::*;
 }

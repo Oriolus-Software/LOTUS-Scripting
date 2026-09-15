@@ -8,8 +8,8 @@ use crate::content::ContentId;
 
 /// Namespace zum Abfragen der aktiven PIS-Gruppe aus dem Simulator.
 ///
-/// Scripts konstruieren diesen Typ nicht manuell; rufen Sie die zugehörigen Funktionen auf
-/// (z. B. [`PisGroup::get_all_stations`]), um PIS-Daten zur Laufzeit zu lesen.
+/// Scripts konstruieren diesen Typ nicht manuell; die zugehörigen Funktionen
+/// (z. B. [`PisGroup::get_all_stations`]) lesen PIS-Daten zur Laufzeit.
 ///
 /// Namespace for querying the active PIS group from the simulator.
 ///

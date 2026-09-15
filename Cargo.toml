@@ -7,6 +7,14 @@ members = [
 ]
 resolver = "2"
 
+[workspace.package]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+homepage = "https://www.lotus-simulator.de"
+readme = "README.md"
+keywords = ["lotus", "simulator", "scripting", "wasm"]
+categories = ["game-development", "wasm", "api-bindings"]
+
 [workspace.dependencies]
 anyhow = "1"
 bevy = { version = "0.17.3", default-features = false }

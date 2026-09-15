@@ -1,9 +1,18 @@
 [package]
 name = "lotussim-shared"
 version = "0.6.1"
-edition = "2021"
-description = "Shared code for LOTUS scripts and engine."
-license = "MIT/Apache-2.0"
+description = "Shared types for LOTUS-Simulator scripts. Depend on `lotussim-script` instead of using this crate directly."
+documentation = "https://docs.rs/lotussim-script"
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+readme.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[package.metadata.docs.rs]
+features = ["ffi"]
+rustdoc-args = ["--cfg", "docsrs"]
 
 [lib]
 name = "lotus_shared"

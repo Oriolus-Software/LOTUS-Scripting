@@ -293,6 +293,8 @@ where
 ///
 /// # Example
 /// ```no_run
+/// # #[cfg(target_arch = "wasm32")]
+/// # {
 /// # use lotus_shared::message::{Message, MessageTarget, send_message};
 /// # use serde::{Deserialize, Serialize};
 /// # use lotus_shared::message_type;
@@ -303,6 +305,7 @@ where
 /// send_message(&TestMessage { value: 42 }, MessageTarget::Myself);
 /// // Send a message to multiple targets
 /// send_message(&TestMessage { value: 42 }, [MessageTarget::Myself, MessageTarget::ModuleSlot(0)]);
+/// # }
 /// ```
 #[cfg(feature = "ffi")]
 pub fn send_message<T: MessageType>(message: &T, targets: impl IntoMessageTargets) {

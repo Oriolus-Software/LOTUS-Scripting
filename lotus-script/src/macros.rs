@@ -4,16 +4,21 @@
 ///
 /// Expandiert zu `init`, `register_actions`, `tick` und `late_tick`, die an die [`crate::Script`]-Implementierung
 /// des angegebenen Typs delegieren. Eingehende Engine-Nachrichten werden in `late_tick` über [`crate::Script::on_message`] zugestellt.
+/// Der Typ muss [`Default`] implementieren.
 ///
 /// Expands to `init`, `register_actions`, `tick`, and `late_tick` functions that
 /// delegate to the [`crate::Script`] implementation on the given type. Incoming engine
 /// messages are delivered in `late_tick` via [`crate::Script::on_message`].
+/// The type must implement [`Default`].
 ///
 /// # Example
 ///
 /// ```no_run
+/// # #[cfg(target_arch = "wasm32")]
+/// # {
 /// use lotus_script::{script, Script};
 ///
+/// #[derive(Default)]
 /// struct MyScript;
 ///
 /// impl Script for MyScript {
@@ -23,6 +28,7 @@
 /// }
 ///
 /// script!(MyScript);
+/// # }
 /// ```
 #[macro_export]
 macro_rules! script {

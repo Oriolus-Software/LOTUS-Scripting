@@ -1,3 +1,13 @@
+//! Niedrigstufige WASM-FFI-Bindungen für LOTUS-Simulator-Scripts.
+//!
+//! Low-level WASM FFI bindings for LOTUS simulator scripts.
+//!
+//! Für Addon-Scripts bitte [`lotussim-script`](https://docs.rs/lotussim-script) verwenden,
+//! nicht diese Crate direkt einbinden.
+//!
+//! For addon scripts, depend on [`lotussim-script`](https://docs.rs/lotussim-script)
+//! instead of using this crate directly.
+
 use serde::{de::DeserializeOwned, Serialize};
 
 #[no_mangle]
