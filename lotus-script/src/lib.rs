@@ -30,7 +30,11 @@
 //! struct MyScript;
 //!
 //! impl Script for MyScript {
+//!     fn init(&mut self) {}
+//!
 //!     fn tick(&mut self) {}
+//!
+//!     fn on_message(&mut self, msg: Message) {}
 //! }
 //!
 //! script!(MyScript);
