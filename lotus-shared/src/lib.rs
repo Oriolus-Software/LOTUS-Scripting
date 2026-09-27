@@ -10,6 +10,7 @@
 
 pub mod action;
 pub mod animation;
+pub mod axis;
 pub mod content;
 pub mod font;
 pub mod gizmos;

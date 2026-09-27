@@ -124,6 +124,17 @@ pub mod action {
     }
 }
 
+pub mod axis {
+    #[link(wasm_import_module = "axis")]
+    extern "C" {
+        pub fn register(axis: u64);
+        pub fn value(axis: u64) -> f32;
+        pub fn center_force(axis: u64, coefficient: f32, saturation: f32, offset: f32);
+        pub fn friction(axis: u64, coefficient: f32);
+        pub fn vibration(axis: u64, magnitude: f32, frequency_hz: f32);
+    }
+}
+
 pub mod input {
     #[link(wasm_import_module = "input")]
     extern "C" {

@@ -1,6 +1,6 @@
 [package]
 name = "lotussim-shared"
-version = "0.6.1"
+version = "0.6.2"
 description = "Shared types for LOTUS-Simulator scripts. Depend on `lotussim-script` instead of using this crate directly."
 documentation = "https://docs.rs/lotussim-script"
 edition.workspace = true
