@@ -182,6 +182,8 @@ pub mod vehicle {
         pub fn velocity_vs_ground() -> f32;
         pub fn acceleration_vs_ground() -> f32;
         pub fn set_road_steering_force(force: f32);
+        pub fn road_steering_wheel_force() -> f32;
+        pub fn set_road_steering_direct(value: f32);
         pub fn set_road_steering_spring_damper_manipulation(
             stiffness_add: f32,
             stiffness_mult: f32,

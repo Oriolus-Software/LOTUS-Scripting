@@ -33,8 +33,17 @@ impl RegisterAxis {
 ///
 /// Restoring force of an axis.
 ///
-/// `coefficient`, `saturation` und `offset` liegen in `0..=1`.
-/// `offset` 0 lässt die Federmitte unverändert.
+/// `coefficient` und `saturation` sind unbeschränkte endliche Stärken.
+/// Der Nennbereich ist `0..=1`. Die Engine multipliziert mit der Geräte-Intensität
+/// und klemmt erst danach auf `0..=1`.
+/// `offset` verschiebt die Federmitte und wird danach auf `-1..=1` geklemmt, ohne Skalierung.
+/// `0` lässt die Federmitte unverändert.
+///
+/// `coefficient` and `saturation` are unrestricted finite strengths.
+/// The nominal range is `0..=1`. The engine multiplies by the device intensity
+/// and only then clamps to `0..=1`.
+/// `offset` shifts the spring center and is then clamped to `-1..=1`, without scaling.
+/// `0` leaves the spring center unchanged.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct SpringForce {
     /// Steifigkeit der Feder.
@@ -56,9 +65,11 @@ pub struct SpringForce {
 /// Oscillation along an axis.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct AxisVibration {
-    /// Stärke, `0` schaltet die Schwingung aus.
+    /// Stärke als unbeschränkter endlicher Wert. `0` schaltet die Schwingung aus.
+    /// Die Engine multipliziert mit der Geräte-Intensität und klemmt erst danach auf `0..=1`.
     ///
-    /// Strength; `0` turns the oscillation off.
+    /// Strength as an unrestricted finite value. `0` turns the oscillation off.
+    /// The engine multiplies by the device intensity and only then clamps to `0..=1`.
     pub magnitude: f32,
     /// Frequenz in Hertz.
     ///
@@ -91,6 +102,17 @@ pub struct AxisForceFeedback {
 pub fn clamp_unit(value: f32) -> f32 {
     if value.is_finite() {
         value.clamp(0.0, 1.0)
+    } else {
+        0.0
+    }
+}
+
+/// Begrenzt einen endlichen Wert auf `-1..=1`. Nicht endliche Werte werden 0.
+///
+/// Clamps a finite value to `-1..=1`. Non-finite values become 0.
+pub fn clamp_signed_unit(value: f32) -> f32 {
+    if value.is_finite() {
+        value.clamp(-1.0, 1.0)
     } else {
         0.0
     }
