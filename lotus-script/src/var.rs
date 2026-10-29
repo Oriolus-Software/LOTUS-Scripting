@@ -4,6 +4,7 @@
 
 use lotus_script_sys::{FfiObject, FromFfi};
 use lotus_shared::content::ContentId;
+use lotus_shared::traffic::TrafficLightPhase;
 
 /// Typ, der an Script-Variablen gebunden werden kann.
 ///
@@ -112,6 +113,18 @@ impl VariableType for &str {
         let name = FfiObject::new(&name);
         let value = FfiObject::new(&var.to_string());
         unsafe { lotus_script_sys::var::set_string(name.packed(), value.packed()) }
+    }
+}
+
+impl VariableType for TrafficLightPhase {
+    type Output = Option<TrafficLightPhase>;
+
+    fn get_var(name: &str) -> Self::Output {
+        TrafficLightPhase::try_from(i64::get_var(name)).ok()
+    }
+
+    fn set_var(name: &str, var: Self) {
+        i64::set_var(name, var.as_i64());
     }
 }
 

@@ -79,6 +79,12 @@ pub mod rand;
 #[doc(hidden)]
 pub mod settings;
 pub mod time;
+/// Ampelphasen und zugehörige Script-Variablennamen.
+///
+/// Traffic-light phases and related script variable names.
+pub mod traffic {
+    pub use lotus_shared::traffic::*;
+}
 pub mod var;
 pub mod vehicle;
 /// PIS-Daten und Abfragefunktionen.
@@ -98,6 +104,7 @@ pub mod prelude {
         log,
         message::{message_type, send_message, Message, MessageTarget, MessageType},
         rand, script, time,
+        traffic::TrafficLightPhase,
         var::{get_var, set_var, VariableType},
         vehicle, Script,
     };

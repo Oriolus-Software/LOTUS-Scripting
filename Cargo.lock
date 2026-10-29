@@ -854,7 +854,7 @@ dependencies = [
 
 [[package]]
 name = "lotussim-shared"
-version = "0.6.3"
+version = "0.6.4"
 dependencies = [
  "bevy",
  "glam",
