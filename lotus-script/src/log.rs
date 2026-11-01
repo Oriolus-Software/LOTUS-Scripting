@@ -50,7 +50,7 @@ pub fn write(level: Level, message: impl AsRef<str>) {
 #[macro_export]
 macro_rules! log {
     ($level:expr, $($arg:tt)*) => {
-        $crate::log::write($level, format!($($arg)*));
+        $crate::log::write($level, format!($($arg)*))
     };
 }
 
