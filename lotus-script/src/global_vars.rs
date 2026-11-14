@@ -1,12 +1,12 @@
 #[doc(hidden)]
 pub struct GlobalVar<T> {
-    name: &'static str,
+    _name: &'static str,
     _phantom: std::marker::PhantomData<T>,
 }
 
 impl<T> GlobalVar<T> {}
 
-struct GlobalVarDef {
+struct _GlobalVarDef {
     name: &'static str,
     kind: &'static str,
 }
