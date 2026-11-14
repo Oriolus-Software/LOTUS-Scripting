@@ -271,8 +271,13 @@ pub mod textures {
             /// Additional spacing between letters in pixels.
             letter_spacing: u32,
             /// Optionale Überschreibungsfarbe für den gesamten Text.
+            /// RGB ersetzt die Glyphenfarbe. Bei `AlphaMode::Opaque` bleibt das Glyphen-Alpha
+            /// im Ziel-Alphakanal. Bei `Mask` und `Blend` wird stattdessen das Alpha dieser
+            /// Farbe mit derselben Abdeckung geschrieben.
             ///
             /// Optional override color for the entire text.
+            /// RGB replaces the glyph color. `AlphaMode::Opaque` keeps the glyph alpha in the
+            /// destination. `Mask` and `Blend` write this color's alpha with the same coverage.
             full_color: Option<Color>,
             /// Alpha-Mischmodus für den Text.
             ///
