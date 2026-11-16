@@ -51,6 +51,7 @@ pub mod time {
         pub fn ticks_alive() -> u64;
         pub fn game_time() -> i64;
         pub fn idle_until_var_changes(name: u64);
+        pub fn idle_for(min_seconds: f64, max_seconds: f64);
         pub fn cancel_idle();
     }
 }
