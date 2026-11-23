@@ -15,7 +15,7 @@ use crate::content::ContentId;
 ///
 /// Scripts do not construct this type manually; call the associated functions
 /// (e.g. [`PisGroup::get_all_stations`]) to read PIS data at runtime.
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug, Serialize, Deserialize)]
 pub struct PisGroup {
     /// Name der PIS-Gruppe.
     ///
@@ -387,7 +387,7 @@ impl PisRouteTerminus {
 /// PISS-Content-Gruppe passend zur aktiven PIS-Gruppe und einer Fahrzeugklasse.
 ///
 /// PISS content group matching the active PIS group and a vehicle class.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PisSpGroup {
     /// Anzeigename der PISS-Gruppe.
     ///
@@ -418,7 +418,7 @@ pub struct PisSpGroup {
 /// Zusätzlicher Linien-Text für eine Station in einer PISS-Gruppe.
 ///
 /// Additional line text for a station in a PISS group.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PisSpAddLines {
     /// Stationscode, zu dem die Zusatzlinien gehören.
     ///
