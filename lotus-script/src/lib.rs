@@ -58,6 +58,12 @@ pub use lotus_bindgen_macros::lotus_bindgen;
 use message::Message;
 
 pub mod action;
+/// Nachrichten zwischen Fahrzeugscripts und KI-Agenten.
+///
+/// Messages between vehicle scripts and AI agents.
+pub mod agent {
+    pub use lotus_shared::agent::*;
+}
 pub mod axis;
 pub mod content;
 #[doc(hidden)]

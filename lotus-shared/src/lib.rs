@@ -9,6 +9,7 @@
 //! instead of using this crate directly.
 
 pub mod action;
+pub mod agent;
 pub mod animation;
 pub mod axis;
 pub mod content;
